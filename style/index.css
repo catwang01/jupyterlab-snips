@@ -20,7 +20,9 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    overflow: auto;
+    min-height: 0;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .jp-snippets-categories {
@@ -45,39 +47,101 @@
 
 .jp-snippets-list {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 8px 8px 8px 8px;
+    background: var(--jp-layout-color0);
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .jp-snippets-item {
-    margin-bottom: 16px;
-    padding: 12px;
+    margin-bottom: 8px;
+    padding: 8px;
     border: 1px solid var(--jp-border-color1);
     border-radius: 4px;
     background: var(--jp-layout-color1);
+    height: 77px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+    --tooltip-delay: 0.5s;
+}
+
+.jp-snippets-item:last-child {
+    margin-bottom: 0;
+}
+
+.jp-snippets-item::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 0;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 8px;
+    border-radius: 4px;
+    background: var(--jp-layout-color0);
+    border: 1px solid var(--jp-border-color1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    color: var(--jp-content-font-color1);
+    font-family: var(--jp-code-font-family);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-all;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+.jp-snippets-item:hover::before {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: var(--tooltip-delay);
+}
+
+@media (min-width: 768px) {
+    .jp-snippets-item:has(+ .jp-snippets-item:nth-last-child(-n+3))::before {
+        left: auto;
+        right: calc(100% + 8px);
+    }
 }
 
 .jp-snippets-item h3 {
-    margin: 0 0 8px 0;
-    font-size: 14px;
+    margin: 0 0 2px 0;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .jp-snippets-item p {
-    margin: 0 0 12px 0;
-    font-size: 12px;
+    margin: 0 0 4px 0;
+    font-size: 11px;
     color: var(--jp-content-font-color2);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 16px;
 }
 
 .jp-snippets-item-actions {
     display: flex;
-    gap: 8px;
+    gap: 4px;
+    margin-top: auto;
+    height: 22px;
 }
 
 .jp-snippets-item-actions button {
-    padding: 4px 8px;
-    border: 1px solid var(--jp-border-color1);
-    border-radius: 3px;
-    background: var(--jp-layout-color1);
-    cursor: pointer;
+    padding: 2px 6px;
+    font-size: 11px;
 }
 
 .jp-snippets-item-actions button:hover {
@@ -163,19 +227,7 @@
 }
 
 .jp-code-preview {
-    margin: 8px 0;
-    padding: 8px;
-    background: var(--jp-cell-editor-background);
-    border-radius: 4px;
-    overflow: auto;
-}
-
-.jp-code-preview pre {
-    margin: 0;
-    white-space: pre-wrap;
-    font-family: var(--jp-code-font-family);
-    font-size: var(--jp-code-font-size);
-    line-height: var(--jp-code-line-height);
+    display: none;
 }
 
 .jp-snippets-code-editor {
@@ -406,4 +458,77 @@
 /* 调整字段间距以容纳错误信息 */
 .jp-snippets-edit-field {
     margin-bottom: 24px;  /* 增加间距 */
+}
+
+/* 美化滚动条 */
+.jp-snippets-list::-webkit-scrollbar,
+.jp-code-preview::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.jp-snippets-list::-webkit-scrollbar-track,
+.jp-code-preview::-webkit-scrollbar-track {
+    background: var(--jp-layout-color0);
+}
+
+.jp-snippets-list::-webkit-scrollbar-thumb,
+.jp-code-preview::-webkit-scrollbar-thumb {
+    background: var(--jp-border-color2);
+    border-radius: 4px;
+}
+
+.jp-snippets-list::-webkit-scrollbar-thumb:hover,
+.jp-code-preview::-webkit-scrollbar-thumb:hover {
+    background: var(--jp-border-color3);
+}
+
+/* 美化 title 提示 */
+.jp-snippets-item {
+    /* ... 其他样式保持不变 ... */
+}
+
+/* 美化原生 title */
+::selection {
+    background: var(--jp-brand-color1);
+    color: white;
+}
+
+/* 全局美化 title 样式 */
+[title] {
+    position: relative;
+}
+
+[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 0;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 8px;
+    border-radius: 4px;
+    background: var(--jp-layout-color0);
+    border: 1px solid var(--jp-border-color1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    color: var(--jp-content-font-color1);
+    font-family: var(--jp-code-font-family);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-all;
+    z-index: 10000;
+}
+
+/* 当靠近右边时显示在左侧 */
+@media (min-width: 768px) {
+    .jp-snippets-item:has(+ .jp-snippets-item:nth-last-child(-n+3))[title]:hover::after {
+        left: auto;
+        right: calc(100% + 8px);
+    }
+}
+
+.jp-snippets-list::-webkit-scrollbar {
+    width: 8px;
+    height: 0;
 } 

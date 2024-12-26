@@ -74,27 +74,47 @@ export const SnippetList: React.FC<SnippetListProps> = ({
             
             <div className="jp-snippets-list">
                 {filteredSnippets.map(snippet => (
-                    <div key={snippet.id} className="jp-snippets-item">
-                        <h3>{snippet.name}</h3>
-                        {snippet.description && (
-                            <p>{snippet.description}</p>
-                        )}
-                        <div className="jp-code-preview">
-                            <pre>{snippet.code}</pre>
-                        </div>
-                        <div className="jp-snippets-item-actions">
-                            <button onClick={() => onInsert(snippet.code)}>
-                                插入
-                            </button>
-                            <button onClick={() => onEdit(snippet)}>
-                                编辑
-                            </button>
-                            <button onClick={() => onDelete(snippet.id)}>
-                                删除
-                            </button>
-                        </div>
-                    </div>
+                    <SnippetItem
+                        key={snippet.id}
+                        snippet={snippet}
+                        onInsert={onInsert}
+                        onEdit={onEdit}
+                        onDelete={onDelete}
+                    />
                 ))}
+            </div>
+        </div>
+    );
+};
+
+interface SnippetItemProps {
+    snippet: Snippet;
+    onInsert: (code: string) => void;
+    onEdit: (snippet: Snippet) => void;
+    onDelete: (id: string) => void;
+}
+
+const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, onDelete }) => {
+    // 获取预览代码
+    const getPreviewCode = (code: string) => {
+        const lines = code.split('\n');
+        if (lines.length > 10) {
+            return lines.slice(0, 10).join('\n') + '\n...';
+        }
+        return code;
+    };
+
+    return (
+        <div 
+            className="jp-snippets-item"
+            title={getPreviewCode(snippet.code)}
+        >
+            <h3>{snippet.name}</h3>
+            {snippet.description && <p>{snippet.description}</p>}
+            <div className="jp-snippets-item-actions">
+                <button onClick={() => onInsert(snippet.code)}>插入</button>
+                <button onClick={() => onEdit(snippet)}>编辑</button>
+                <button onClick={() => onDelete(snippet.id)}>删除</button>
             </div>
         </div>
     );
