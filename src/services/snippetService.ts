@@ -92,4 +92,9 @@ export class SnippetService {
         // 初始化检查
         this.getSnippets().catch(console.error);
     }
+
+    async checkNameExists(name: string, excludeId?: string): Promise<boolean> {
+        const snippets = await this.getSnippets();
+        return snippets.some(s => s.name === name && s.id !== excludeId);
+    }
 } 

@@ -6,10 +6,11 @@ import {
 import { ICommandPalette, WidgetTracker } from '@jupyterlab/apputils';
 import { INotebookTracker } from '@jupyterlab/notebook';
 import { codeIcon } from '@jupyterlab/ui-components';
-import { showSaveSnippetDialog } from './components/SaveSnippetDialog';
+import { EditSnippetPanel } from './components/EditSnippetPanel';
 import { SnippetService } from './services/snippetService';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { SnippetPanel } from './components/SnippetPanel';
+import { Snippet } from './models/types';
 
 const plugin: JupyterFrontEndPlugin<void> = {
     id: 'jupyterlab-snips:plugin',
@@ -84,19 +85,32 @@ const plugin: JupyterFrontEndPlugin<void> = {
                     }
 
                     const code = cell.model.sharedModel.source;
-                    const result = await showSaveSnippetDialog(code);
                     
-                    if (result) {
-                        // 调用后端 API 保存代码片段
-                        await snippetService.saveSnippet({
-                            name: result.name,
-                            code,
-                            category: result.category,
-                            description: result.description
-                        });
-                        // 保存成功后刷新面板
-                        snippetPanel.refresh();
-                    }
+                    // 创建新的代码片段
+                    const newSnippet = {
+                        id: crypto.randomUUID(),
+                        name: '',
+                        code,
+                        category: '',
+                        description: '',
+                        createdAt: Date.now(),
+                        updatedAt: Date.now()
+                    } as Snippet;
+
+                    const editPanel = new EditSnippetPanel({
+                        snippet: newSnippet,
+                        onSave: async (snippet) => {
+                            await snippetService.saveSnippet(snippet);
+                            snippetPanel.refresh();
+                            editPanel.dispose();
+                        },
+                        onCancel: () => {
+                            editPanel.dispose();
+                        }
+                    });
+
+                    // 将编辑面板添加到主区域
+                    app.shell.add(editPanel, 'main');
                 } catch (error) {
                     console.error('保存代码片段失败:', error);
                 }

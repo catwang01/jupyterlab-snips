@@ -3,8 +3,8 @@ import { ReactWidget } from '@jupyterlab/apputils';
 import { SnippetList } from './SnippetList';
 import { SnippetService } from '../services/snippetService';
 import { Snippet } from '../models/types';
-import { showSaveSnippetDialog } from './SaveSnippetDialog';
 import { JupyterFrontEnd } from '@jupyterlab/application';
+import { EditSnippetPanel } from './EditSnippetPanel';
 
 declare global {
     interface Window {
@@ -80,19 +80,22 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         };
 
         const handleEdit = async (snippet: Snippet) => {
-            const result = await showSaveSnippetDialog(snippet.code, {
-                name: snippet.name,
-                category: snippet.category,
-                description: snippet.description
+            const editPanel = new EditSnippetPanel({
+                snippet,
+                onSave: async (updatedSnippet) => {
+                    await snippetService.current.updateSnippet(snippet.id, updatedSnippet);
+                    loadSnippets();
+                    // 关闭编辑面板
+                    editPanel.dispose();
+                },
+                onCancel: () => {
+                    // 关闭编辑面板
+                    editPanel.dispose();
+                }
             });
 
-            if (result) {
-                await snippetService.current.updateSnippet(snippet.id, {
-                    ...result,
-                    code: snippet.code
-                });
-                loadSnippets();
-            }
+            // 将编辑面板添加到主区域
+            window.jupyterapp?.shell.add(editPanel, 'main');
         };
 
         const handleDelete = async (id: string) => {
