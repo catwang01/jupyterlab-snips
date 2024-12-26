@@ -127,6 +127,36 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
             }
         };
 
+        const handleNew = () => {
+            const newSnippet: Snippet = {
+                id: crypto.randomUUID(),
+                name: '',
+                code: '',
+                tags: [],
+                description: '',
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+
+            const editPanel = new EditSnippetPanel({
+                snippet: newSnippet,
+                onSave: async (snippet) => {
+                    try {
+                        await snippetService.current.saveSnippet(snippet);
+                        loadSnippets();
+                        editPanel.dispose();
+                    } catch (error) {
+                        console.error('保存失败:', error);
+                    }
+                },
+                onCancel: () => {
+                    editPanel.dispose();
+                }
+            });
+
+            window.jupyterapp?.shell.add(editPanel, 'main');
+        };
+
         return (
             <div className="jp-snippets-panel">
                 <SnippetList
@@ -139,6 +169,7 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                     onInsert={handleInsert}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
+                    onNew={handleNew}
                 />
             </div>
         );

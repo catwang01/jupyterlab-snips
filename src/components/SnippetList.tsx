@@ -12,6 +12,7 @@ interface SnippetListProps {
     onInsert: (code: string) => void;
     onEdit: (snippet: Snippet) => void;
     onDelete: (id: string) => void;
+    onNew: () => void;
 }
 
 export const SnippetList: React.FC<SnippetListProps> = ({
@@ -23,7 +24,8 @@ export const SnippetList: React.FC<SnippetListProps> = ({
     onRefresh,
     onInsert,
     onEdit,
-    onDelete
+    onDelete,
+    onNew
 }) => {
     const availableTags: string[] = Array.from(
         new Set(
@@ -62,13 +64,20 @@ export const SnippetList: React.FC<SnippetListProps> = ({
                         placeholder="选择标签过滤..."
                     />
                 </div>
-                <button 
-                    className="jp-snippets-refresh"
-                    onClick={onRefresh}
-                    title="刷新列表"
-                >
-                    刷新
-                </button>
+                <div className="jp-snippets-actions">
+                    <button 
+                        className="jp-snippets-new"
+                        onClick={onNew}
+                    >
+                        新建
+                    </button>
+                    <button 
+                        className="jp-snippets-refresh"
+                        onClick={onRefresh}
+                    >
+                        刷新
+                    </button>
+                </div>
             </div>
             
             <div className="jp-snippets-list">
