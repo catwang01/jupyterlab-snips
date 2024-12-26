@@ -9,7 +9,7 @@ import { SnippetService } from './services/snippetService';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 
 const plugin: JupyterFrontEndPlugin<void> = {
-    id: 'jupyterlab-snippets:plugin',
+    id: 'jupyterlab-snip:plugin',
     autoStart: true,
     requires: [ICommandPalette, INotebookTracker, IMainMenu],
     activate: (

@@ -1,7 +1,7 @@
 {
-  "name": "jupyterlab-snippets",
+  "name": "jupyterlab-snip",
   "version": "0.1.0",
-  "description": "JupyterLab 代码片段管理插件",
+  "description": "JupyterLab 代码片段插件",
   "keywords": [
     "jupyter",
     "jupyterlab",
@@ -33,7 +33,7 @@
     "build:lib": "tsc",
     "clean": "jlpm clean:lib && jlpm clean:labextension",
     "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
-    "clean:labextension": "rimraf jupyterlab_snippets/labextension",
+    "clean:labextension": "rimraf jupyterlab_snip/labextension",
     "watch": "run-p watch:src watch:labextension",
     "watch:src": "tsc -w",
     "watch:labextension": "jupyter labextension watch ."
@@ -61,6 +61,6 @@
   ],
   "jupyterlab": {
     "extension": true,
-    "outputDir": "jupyterlab_snippets/labextension"
+    "outputDir": "jupyterlab_snip/labextension"
   }
 }

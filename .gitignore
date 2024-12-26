@@ -37,10 +37,10 @@ lib/
 tsconfig.tsbuildinfo
 
 # JupyterLab
-jupyterlab_snippets/labextension/
-jupyterlab_snippets/labextension/package.json
-jupyterlab_snippets/labextension/static/
-jupyterlab_snippets/labextension/build_log.json
+jupyterlab_snip/labextension/
+jupyterlab_snip/labextension/package.json
+jupyterlab_snip/labextension/static/
+jupyterlab_snip/labextension/build_log.json
 
 # IDE
 .idea/
@@ -67,3 +67,8 @@ htmlcov/
 *.pyc
 .jupyter/
 .ipython/ 
+
+# Untitled.ipynb
+Untitled*.ipynb
+
+# *-checkpoint.ipynb 
