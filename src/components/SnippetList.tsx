@@ -66,13 +66,13 @@ export const SnippetList: React.FC<SnippetListProps> = ({
                 </div>
                 <div className="jp-snippets-actions">
                     <button 
-                        className="jp-snippets-new"
+                        className="jp-snippets-button"
                         onClick={onNew}
                     >
                         新建
                     </button>
                     <button 
-                        className="jp-snippets-refresh"
+                        className="jp-snippets-button"
                         onClick={onRefresh}
                     >
                         刷新
@@ -132,9 +132,9 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
             </div>
             {snippet.description && <p>{snippet.description}</p>}
             <div className="jp-snippets-item-actions">
-                <button onClick={() => onInsert(snippet.code)}>插入</button>
-                <button onClick={() => onEdit(snippet)}>编辑</button>
-                <button onClick={() => onDelete(snippet.id)}>删除</button>
+                <button className="jp-snippets-button" onClick={() => onInsert(snippet.code)}>插入</button>
+                <button className="jp-snippets-button" onClick={() => onEdit(snippet)}>编辑</button>
+                <button className="jp-snippets-button" onClick={() => onDelete(snippet.id)}>删除</button>
             </div>
         </div>
     );

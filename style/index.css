@@ -49,7 +49,7 @@
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 8px 8px 8px 8px;
+    margin-top: 8px;
     background: var(--jp-layout-color0);
     border: 1px solid var(--jp-border-color1);
     border-radius: 4px;
@@ -128,16 +128,43 @@
 
 .jp-snippets-item-actions {
     display: flex;
-    gap: 4px;
+    gap: 8px;
     margin-top: auto;
-    height: 22px;
+    height: 24px;
 }
 
+/* 通用按钮基础样式 */
+.jp-snippets-button {
+    padding: 4px 12px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--jp-brand-color1);
+    color: white;
+}
+
+.jp-snippets-button:hover {
+    opacity: 0.8;
+}
+
+.jp-snippets-button:active {
+    transform: scale(0.98);
+}
+
+/* 修改现有按钮使用通用样式 */
 .jp-snippets-item-actions button {
-    padding: 2px 6px;
-    font-size: 11px;
+    composes: jp-snippets-button;
 }
 
+.jp-snippets-new {
+    composes: jp-snippets-button;
+}
+
+.jp-snippets-refresh {
+    composes: jp-snippets-button;
+}
 
 .jp-snippets-dialog {
     padding: 10px;
@@ -177,10 +204,6 @@
     flex-direction: column;
     background: var(--jp-layout-color1);
     color: var(--jp-ui-font-color1);
-}
-
-.jp-snippets-search {
-    padding: 8px;
 }
 
 .jp-snippets-search input {
@@ -684,10 +707,9 @@
 .jp-snippets-filter {
     display: flex;
     flex-direction: column;
-    gap: 8px;
-    padding: 8px;
+    margin-top: 8px;
+    width: 60%;
     background: var(--jp-layout-color1);
-    border-bottom: 1px solid var(--jp-border-color1);
 }
 
 .jp-snippets-search {
@@ -730,7 +752,7 @@
     background: var(--jp-brand-color1);
     border: none;
     color: white;
-}
+ }
 
 /* 刷新按钮样式保持不变 */
 .jp-snippets-refresh {
