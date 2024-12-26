@@ -16,8 +16,9 @@ with (HERE / "package.json").open() as f:
 setup_args = dict(
     name=name,
     version=version,
-    url="https://github.com/your-name/jupyterlab_snips",
-    author="Your Name",
+    url="https://github.com/catwang01/jupyterlab_snips",
+    author="catwang01",
+    author_email="edwardelricwzx@gmail.com",
     description="A JupyterLab extension for managing code snippets",
     long_description=Path("README.md").read_text() if Path("README.md").exists() else "",
     long_description_content_type="text/markdown",

@@ -34,57 +34,27 @@ pip install jupyterlab-snips
 ## 使用方法
 
 1. **保存代码片段**
-   - 在笔记本中选择要保存的代码
-   - 右键点击，选择"保存为代码片段"
-   - 填写片段名称、分类（可选）和描述（可选）
-   - 点击保存
+  1. 在cell中选中文本保存
+    1. 在笔记本中选择要保存的代码
+    2. 右键点击，选择"保存为代码片段"
+    3. 填写片段名称、分类（可选）和描述（可选）
+    4. 点击保存
+  2. 在左侧边栏点击新建代码片段图标
+    1. 点击新建代码片段图标
+    2. 填写片段名称、分类（可选）和描述（可选）
+    3. 点击保存
 
 2. **使用代码片段**
    - 点击左侧边栏的代码片段图标
    - 浏览或搜索需要的代码片段
    - 点击"插入"按钮将代码插入到当前单元格
+   - 通过 tab 键自动补全代码片段
 
 3. **管理代码片段**
    - 在代码片段面板中查看所有片段
    - 使用搜索框快速查找片段
    - 通过分类筛选器筛选片段
    - 点击"编辑"或"删除"按钮管理片段
-
-## 示例
-
-### 数据处理片段
-```python
-import pandas as pd
-
-def load_and_clean_data(file_path):
-    df = pd.read_csv(file_path)
-    df = df.dropna()
-    df = df.drop_duplicates()
-    return df
-```
-
-### 可视化片段
-```python
-import matplotlib.pyplot as plt
-
-def plot_distribution(data, column):
-    plt.figure(figsize=(10, 6))
-    data[column].hist()
-    plt.title(f'Distribution of {column}')
-    plt.show()
-```
-
-### 模型训练片段
-```python
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
-
-def train_model(X, y, model):
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    return accuracy_score(y_test, y_pred)
-```
 
 ## 开发
 
@@ -98,7 +68,7 @@ def train_model(X, y, model):
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-name/jupyterlab-snips
+git clone https://github.com/catwang01/jupyterlab-snips
 cd jupyterlab-snips
 
 # 安装依赖
@@ -146,13 +116,3 @@ jupyterlab-snips/
 ## 许可证
 
 本项目采用 BSD-3-Clause 许可证 - 详见 [LICENSE](LICENSE) 文件
-```
-
-这个 README 文件包含了：
-1. 插件的主要功能介绍
-2. 详细的安装说明
-3. 使用方法和示例代码
-4. 开发环境设置和要求
-5. 项目结构说明
-6. 贡献指南
-7. 许可证信息
