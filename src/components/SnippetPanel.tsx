@@ -8,35 +8,19 @@ const SnippetPanelComponent: React.FC = () => {
     const [snippets, setSnippets] = useState<Snippet[]>([]);
     const [searchText, setSearchText] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         loadSnippets();
     }, []);
 
     const loadSnippets = async () => {
-        try {
-            const service = new SnippetService();
-            const data = await service.getSnippets();
-            setSnippets(data);
-            setError(null);
-        } catch (err) {
-            console.error('加载代码片段失败:', err);
-            setError('加载代码片段失败');
-        }
-    };
-
-    const handleCategoryChange = (category: string | null) => {
-        setSelectedCategory(category);
+        const service = new SnippetService();
+        const data = await service.getSnippets();
+        setSnippets(data);
     };
 
     return (
         <div className="jp-snippets-panel">
-            {error && (
-                <div className="jp-snippets-error">
-                    {error}
-                </div>
-            )}
             <div className="jp-snippets-search">
                 <input 
                     type="text"
@@ -50,7 +34,7 @@ const SnippetPanelComponent: React.FC = () => {
                     snippets={snippets}
                     searchText={searchText}
                     selectedCategory={selectedCategory}
-                    onCategoryChange={handleCategoryChange}
+                    onCategoryChange={(category) => setSelectedCategory(category)}
                 />
             </div>
         </div>

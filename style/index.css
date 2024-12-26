@@ -113,4 +113,32 @@
     border-radius: 4px;
     max-height: 200px;
     overflow: auto;
+}
+
+.jp-snippets-panel-widget {
+    min-width: 300px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--jp-layout-color1);
+    color: var(--jp-ui-font-color1);
+}
+
+.jp-snippets-search {
+    padding: 8px;
+}
+
+.jp-snippets-search input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+    background: var(--jp-input-active-background);
+    color: var(--jp-ui-font-color0);
+}
+
+.jp-snippets-content {
+    flex: 1;
+    overflow: auto;
+    padding: 8px;
 } 

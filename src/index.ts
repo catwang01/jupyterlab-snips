@@ -1,28 +1,66 @@
 import {
     JupyterFrontEnd,
-    JupyterFrontEndPlugin
+    JupyterFrontEndPlugin,
+    ILayoutRestorer
 } from '@jupyterlab/application';
-import { ICommandPalette } from '@jupyterlab/apputils';
+import { ICommandPalette, WidgetTracker } from '@jupyterlab/apputils';
 import { INotebookTracker } from '@jupyterlab/notebook';
+import { codeIcon } from '@jupyterlab/ui-components';
 import { showSaveSnippetDialog } from './components/SaveSnippetDialog';
 import { SnippetService } from './services/snippetService';
 import { IMainMenu } from '@jupyterlab/mainmenu';
+import { SnippetPanel } from './components/SnippetPanel';
 
 const plugin: JupyterFrontEndPlugin<void> = {
     id: 'jupyterlab-snips:plugin',
     autoStart: true,
-    requires: [ICommandPalette, INotebookTracker, IMainMenu],
+    requires: [ICommandPalette, INotebookTracker, IMainMenu, ILayoutRestorer],
     activate: (
         app: JupyterFrontEnd,
         palette: ICommandPalette,
         notebookTracker: INotebookTracker,
-        mainMenu: IMainMenu
+        mainMenu: IMainMenu,
+        restorer: ILayoutRestorer
     ) => {
         console.log('JupyterLab extension jupyterlab-snips is activated!');
 
         // 初始化 SnippetService
         const snippetService = new SnippetService();
         snippetService.initialize();
+
+        // 创建代码片段面板
+        const snippetPanel = new SnippetPanel();
+        snippetPanel.id = 'jupyterlab-snips';
+        snippetPanel.title.icon = codeIcon;
+        snippetPanel.title.caption = '代码片段';
+
+        // 添加到左侧边栏
+        app.shell.add(snippetPanel, 'left', { rank: 200 });
+
+        // 创建 widget 跟踪器以保存面板状态
+        const tracker = new WidgetTracker<SnippetPanel>({
+            namespace: 'jupyterlab-snips'
+        });
+
+        // 恢复面板状态
+        if (restorer) {
+            restorer.restore(tracker, {
+                command: 'snippets:show',
+                name: () => 'jupyterlab-snips'
+            });
+        }
+
+        // 添加命令
+        const command = 'snippets:show';
+        app.commands.addCommand(command, {
+            label: '显示代码片段面板',
+            execute: () => {
+                if (!snippetPanel.isAttached) {
+                    app.shell.add(snippetPanel, 'left', { rank: 200 });
+                }
+                app.shell.activateById(snippetPanel.id);
+            }
+        });
 
         // 添加保存代码片段的命令
         const saveCommand = 'snippets:save';
