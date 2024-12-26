@@ -24,23 +24,22 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
     ({ onRefresh }, ref) => {
         const [snippets, setSnippets] = useState<Snippet[]>([]);
         const [searchText, setSearchText] = useState('');
-        const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+        const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
         const snippetService = useRef(new SnippetService());
 
         const loadSnippets = useCallback(async () => {
             try {
                 const data = await snippetService.current.getSnippets();
                 setSnippets(data);
-                onRefresh?.();
             } catch (error) {
                 console.error('加载代码片段失败:', error);
             }
-        }, [onRefresh]);
+        }, []);
 
         // 暴露 loadSnippets 方法给父组件
         React.useImperativeHandle(ref, () => ({
             loadSnippets
-        }));
+        }), [loadSnippets]);
 
         useEffect(() => {
             loadSnippets();
@@ -83,51 +82,77 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
             const editPanel = new EditSnippetPanel({
                 snippet,
                 onSave: async (updatedSnippet) => {
-                    await snippetService.current.updateSnippet(snippet.id, updatedSnippet);
-                    loadSnippets();
-                    // 关闭编辑面板
-                    editPanel.dispose();
+                    try {
+                        // 更新代码片段
+                        await snippetService.current.updateSnippet(snippet.id, updatedSnippet);
+                        
+                        // 更新标签列表
+                        const allSnippets = await snippetService.current.getSnippets();
+                        const allTags = Array.from(new Set(
+                            allSnippets
+                                .map(s => s.category)
+                                .filter((c): c is string => typeof c === 'string')
+                                .reduce<string[]>((acc, curr) => [...acc, ...curr.split(', ')], [])
+                        ));
+                        await snippetService.current.saveTags(allTags);
+                        
+                        loadSnippets();
+                        editPanel.dispose();
+                    } catch (error) {
+                        console.error('更新失败:', error);
+                    }
                 },
                 onCancel: () => {
-                    // 关闭编辑面板
                     editPanel.dispose();
                 }
             });
 
-            // 将编辑面板添加到主区域
             window.jupyterapp?.shell.add(editPanel, 'main');
         };
 
         const handleDelete = async (id: string) => {
             const confirmed = window.confirm('确定要删除这个代码片段吗？');
             if (confirmed) {
-                await snippetService.current.deleteSnippet(id);
-                loadSnippets();
+                try {
+                    await snippetService.current.deleteSnippet(id);
+                    
+                    // 更新标签列表
+                    const allSnippets = await snippetService.current.getSnippets();
+                    const allTags = Array.from(new Set(
+                        allSnippets
+                            .map(s => s.category)
+                            .filter((c): c is string => typeof c === 'string')
+                            .reduce<string[]>((acc, curr) => [...acc, ...curr.split(', ')], [])
+                    ));
+                    await snippetService.current.saveTags(allTags);
+                    
+                    loadSnippets();
+                } catch (error) {
+                    console.error('删除失败:', error);
+                }
             }
         };
 
         return (
             <div className="jp-snippets-panel">
                 <div className="jp-snippets-search">
-                    <input 
+                    <input
                         type="text"
-                        placeholder="搜索代码片段..."
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
+                        placeholder="搜索代码片段..."
                     />
                 </div>
-                <div className="jp-snippets-content">
-                    <SnippetList 
-                        snippets={snippets}
-                        searchText={searchText}
-                        selectedCategory={selectedCategory}
-                        onCategoryChange={(category) => setSelectedCategory(category)}
-                        onRefresh={loadSnippets}
-                        onInsert={handleInsert}
-                        onEdit={handleEdit}
-                        onDelete={handleDelete}
-                    />
-                </div>
+                <SnippetList
+                    snippets={snippets}
+                    searchText={searchText}
+                    selectedCategories={selectedCategories}
+                    onCategoriesChange={setSelectedCategories}
+                    onRefresh={loadSnippets}
+                    onInsert={handleInsert}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                />
             </div>
         );
     }
@@ -143,7 +168,6 @@ export class SnippetPanel extends ReactWidget {
     }
 
     refresh(): void {
-        // 调用组件的 loadSnippets 方法
         const component = this._component.current;
         if (component) {
             component.loadSnippets();
@@ -151,6 +175,6 @@ export class SnippetPanel extends ReactWidget {
     }
 
     render(): JSX.Element {
-        return <SnippetPanelComponent ref={this._component} onRefresh={() => this.update()} />;
+        return <SnippetPanelComponent ref={this._component} />;
     }
 } 

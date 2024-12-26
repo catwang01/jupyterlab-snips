@@ -7,7 +7,7 @@ export class SnippetService {
 
     constructor() {
         this.serverSettings = ServerConnection.makeSettings();
-        this.baseUrl = `${this.serverSettings.baseUrl}jupyterlab-snips/snippets`;
+        this.baseUrl = `${this.serverSettings.baseUrl}jupyterlab-snips`;
     }
 
     async saveSnippet(snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>): Promise<Snippet> {
@@ -19,7 +19,7 @@ export class SnippetService {
         };
 
         const response = await ServerConnection.makeRequest(
-            this.baseUrl,
+            `${this.baseUrl}/snippets`,
             {
                 method: 'POST',
                 headers: {
@@ -39,7 +39,7 @@ export class SnippetService {
 
     async getSnippets(): Promise<Snippet[]> {
         const response = await ServerConnection.makeRequest(
-            this.baseUrl,
+            `${this.baseUrl}/snippets`,
             {},
             this.serverSettings
         );
@@ -53,7 +53,7 @@ export class SnippetService {
 
     async updateSnippet(id: string, snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>): Promise<Snippet> {
         const response = await ServerConnection.makeRequest(
-            `${this.baseUrl}/${id}`,
+            `${this.baseUrl}/snippets/${id}`,
             {
                 method: 'PUT',
                 headers: {
@@ -76,7 +76,7 @@ export class SnippetService {
 
     async deleteSnippet(id: string): Promise<void> {
         const response = await ServerConnection.makeRequest(
-            `${this.baseUrl}/${id}`,
+            `${this.baseUrl}/snippets/${id}`,
             {
                 method: 'DELETE'
             },
@@ -96,5 +96,39 @@ export class SnippetService {
     async checkNameExists(name: string, excludeId?: string): Promise<boolean> {
         const snippets = await this.getSnippets();
         return snippets.some(s => s.name === name && s.id !== excludeId);
+    }
+
+    async getTags(): Promise<string[]> {
+        const response = await ServerConnection.makeRequest(
+            `${this.baseUrl}/tags`,
+            {
+                method: 'GET'
+            },
+            this.serverSettings
+        );
+
+        if (!response.ok) {
+            throw new Error('获取标签失败');
+        }
+
+        return response.json();
+    }
+
+    async saveTags(tags: string[]): Promise<void> {
+        const response = await ServerConnection.makeRequest(
+            `${this.baseUrl}/tags`,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(tags)
+            },
+            this.serverSettings
+        );
+
+        if (!response.ok) {
+            throw new Error('保存标签失败');
+        }
     }
 } 

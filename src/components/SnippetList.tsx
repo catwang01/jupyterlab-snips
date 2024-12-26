@@ -4,8 +4,8 @@ import { Snippet } from '../models/types';
 interface SnippetListProps {
     snippets: Snippet[];
     searchText: string;
-    selectedCategory: string | null;
-    onCategoryChange: (category: string | null) => void;
+    selectedCategories: string[];
+    onCategoriesChange: (categories: string[]) => void;
     onRefresh: () => void;
     onInsert: (code: string) => void;
     onEdit: (snippet: Snippet) => void;
@@ -15,8 +15,8 @@ interface SnippetListProps {
 export const SnippetList: React.FC<SnippetListProps> = ({
     snippets,
     searchText,
-    selectedCategory,
-    onCategoryChange,
+    selectedCategories,
+    onCategoriesChange,
     onRefresh,
     onInsert,
     onEdit,
@@ -30,15 +30,22 @@ export const SnippetList: React.FC<SnippetListProps> = ({
         )
     );
 
+    const handleCategoryToggle = (category: string) => {
+        if (selectedCategories.includes(category)) {
+            onCategoriesChange(selectedCategories.filter(c => c !== category));
+        } else {
+            onCategoriesChange([...selectedCategories, category]);
+        }
+    };
+
     const filteredSnippets = snippets.filter(snippet => {
         const matchesSearch = searchText ? 
             snippet.name.toLowerCase().includes(searchText.toLowerCase()) ||
             snippet.description?.toLowerCase().includes(searchText.toLowerCase()) :
             true;
             
-        const matchesCategory = selectedCategory ? 
-            snippet.category === selectedCategory :
-            true;
+        const matchesCategory = selectedCategories.length === 0 || 
+            (snippet.category && selectedCategories.includes(snippet.category));
 
         return matchesSearch && matchesCategory;
     });
@@ -47,20 +54,20 @@ export const SnippetList: React.FC<SnippetListProps> = ({
         <div className="jp-snippets-container">
             <div className="jp-snippets-header">
                 <div className="jp-snippets-categories">
-                    <button 
-                        onClick={() => onCategoryChange(null)}
-                        className={selectedCategory === null ? 'active' : ''}
-                    >
-                        全部
-                    </button>
                     {categories.map(category => (
-                        <button
+                        <label
                             key={category}
-                            onClick={() => onCategoryChange(category)}
-                            className={selectedCategory === category ? 'active' : ''}
+                            className={`jp-snippets-category-checkbox ${
+                                selectedCategories.includes(category) ? 'active' : ''
+                            }`}
                         >
+                            <input
+                                type="checkbox"
+                                checked={selectedCategories.includes(category)}
+                                onChange={() => handleCategoryToggle(category)}
+                            />
                             {category}
-                        </button>
+                        </label>
                     ))}
                 </div>
                 <button 
@@ -109,7 +116,12 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
             className="jp-snippets-item"
             title={getPreviewCode(snippet.code)}
         >
-            <h3>{snippet.name}</h3>
+            <div className="jp-snippets-item-header">
+                <h3>{snippet.name}</h3>
+                {snippet.category && (
+                    <span className="jp-snippets-tag">{snippet.category}</span>
+                )}
+            </div>
             {snippet.description && <p>{snippet.description}</p>}
             <div className="jp-snippets-item-actions">
                 <button onClick={() => onInsert(snippet.code)}>插入</button>

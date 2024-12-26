@@ -531,4 +531,163 @@
 .jp-snippets-list::-webkit-scrollbar {
     width: 8px;
     height: 0;
+}
+
+/* 分类复选框样式 */
+.jp-snippets-category-checkbox {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+    background: var(--jp-layout-color1);
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+}
+
+.jp-snippets-category-checkbox input {
+    margin-right: 4px;
+}
+
+.jp-snippets-category-checkbox.active {
+    background: var(--jp-brand-color1);
+    color: white;
+    border-color: var(--jp-brand-color1);
+}
+
+/* 标签样式 */
+.jp-snippets-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.jp-snippets-tag {
+    padding: 2px 6px;
+    background: var(--jp-layout-color2);
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--jp-content-font-color2);
+    white-space: nowrap;
+}
+
+/* 调整标题样式以适应新布局 */
+.jp-snippets-item h3 {
+    margin: 0;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+/* 分类选择器样式 */
+.jp-snippets-category-select {
+    width: 100%;
+    min-height: 32px;
+    background: var(--jp-input-background);
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    color: var(--jp-content-font-color1);
+}
+
+.jp-snippets-category-select .jp-select-placeholder {
+    color: var(--jp-ui-font-color2);
+}
+
+.jp-snippets-category-select .jp-select-value {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 2px;
+}
+
+.jp-snippets-category-select .jp-select-value-item {
+    background: var(--jp-layout-color2);
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.jp-snippets-category-select .jp-select-value-item-remove {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.jp-snippets-category-select .jp-select-value-item-remove:hover {
+    opacity: 1;
+}
+
+/* 多选输入框样式 */
+.jp-snippets-multi-select {
+    position: relative;
+    width: 100%;
+}
+
+.jp-snippets-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    background: var(--jp-input-background);
+    min-height: 32px;
+}
+
+.jp-snippets-tags input {
+    border: none !important;
+    outline: none !important;
+    padding: 2px !important;
+    background: transparent !important;
+    flex: 1;
+    min-width: 100px;
+    box-shadow: none !important;
+}
+
+.jp-snippets-tag {
+    background: var(--jp-layout-color2);
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.jp-snippets-tag-remove {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.jp-snippets-tag-remove:hover {
+    opacity: 1;
+}
+
+.jp-snippets-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--jp-layout-color1);
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    margin-top: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.jp-snippets-option {
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.jp-snippets-option:hover {
+    background: var(--jp-layout-color2);
 } 

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ReactWidget } from '@jupyterlab/apputils';
 import { Snippet } from '../models/types';
 import { SnippetService } from '../services/snippetService';
@@ -9,6 +9,114 @@ interface EditSnippetPanelProps {
     onCancel: () => void;
 }
 
+// 自定义多选输入组件
+interface MultiSelectProps {
+    value: string[];
+    options: string[];
+    onChange: (values: string[]) => void;
+    onCreate?: (value: string) => void;
+    placeholder?: string;
+}
+
+const MultiSelect: React.FC<MultiSelectProps> = ({
+    value,
+    options,
+    onChange,
+    onCreate,
+    placeholder
+}) => {
+    const [inputValue, setInputValue] = useState('');
+    const [isEditing, setIsEditing] = useState(false);
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter' && inputValue.trim()) {
+            e.preventDefault();
+            addValue(inputValue.trim());
+        } else if (e.key === 'Backspace' && !inputValue && value.length > 0) {
+            onChange(value.slice(0, -1));
+        }
+    };
+
+    // 添加新值的通用函数
+    const addValue = (newValue: string) => {
+        if (!options.includes(newValue)) {
+            onCreate?.(newValue);
+        }
+        if (!value.includes(newValue)) {
+            onChange([...value, newValue]);
+        }
+        setInputValue('');
+    };
+
+    const removeTag = (tag: string) => {
+        onChange(value.filter(v => v !== tag));
+    };
+
+    // 处理选项点击
+    const handleOptionClick = (opt: string) => {
+        addValue(opt);
+        // 点击后保持焦点在输入框
+        inputRef.current?.focus();
+    };
+
+    // 处理输入框失去焦点
+    const handleBlur = (e: React.FocusEvent) => {
+        // 使用 setTimeout 确保点击选项时不会立即关闭选项列表
+        setTimeout(() => {
+            setIsEditing(false);
+        }, 200);
+    };
+
+    return (
+        <div className="jp-snippets-multi-select">
+            <div className="jp-snippets-tags">
+                {value.map(tag => (
+                    <span key={tag} className="jp-snippets-tag">
+                        {tag}
+                        <span 
+                            className="jp-snippets-tag-remove"
+                            onClick={() => removeTag(tag)}
+                        >
+                            ×
+                        </span>
+                    </span>
+                ))}
+                <input
+                    ref={inputRef}
+                    type="text"
+                    value={inputValue}
+                    onChange={e => setInputValue(e.target.value)}
+                    onKeyDown={handleKeyDown}
+                    onFocus={() => setIsEditing(true)}
+                    onBlur={handleBlur}
+                    placeholder={value.length === 0 ? placeholder : ''}
+                />
+            </div>
+            {isEditing && (
+                <div className="jp-snippets-options">
+                    {options
+                        .filter(opt => 
+                            !value.includes(opt) && 
+                            opt.toLowerCase().includes(inputValue.toLowerCase())
+                        )
+                        .map(opt => (
+                            <div
+                                key={opt}
+                                className="jp-snippets-option"
+                                onClick={() => handleOptionClick(opt)}
+                                onMouseDown={(e) => e.preventDefault()} // 防止失去焦点
+                            >
+                                {opt}
+                            </div>
+                        ))
+                    }
+                </div>
+            )}
+        </div>
+    );
+};
+
 const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
     snippet,
     onSave,
@@ -16,10 +124,38 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
 }) => {
     const [name, setName] = useState(snippet.name);
     const [nameError, setNameError] = useState<string | null>(null);
-    const [category, setCategory] = useState(snippet.category || '');
+    const [categories, setCategories] = useState<string[]>(snippet.category ? [snippet.category] : []);
     const [description, setDescription] = useState(snippet.description || '');
     const [code, setCode] = useState(snippet.code);
     const snippetService = useRef(new SnippetService());
+
+    // 获取所有可用标签
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
+    
+    useEffect(() => {
+        const loadTags = async () => {
+            try {
+                const tags = await snippetService.current.getTags();
+                setAvailableTags(tags);
+            } catch (error) {
+                console.error('加载标签失败:', error);
+            }
+        };
+        loadTags();
+    }, []);
+
+    // 处理标签变化
+    const handleTagsChange = async (newTags: string[]) => {
+        setCategories(newTags);
+        // 保存新的标签到后端
+        try {
+            const allTags = Array.from(new Set([...availableTags, ...newTags]));
+            await snippetService.current.saveTags(allTags);
+            setAvailableTags(allTags);
+        } catch (error) {
+            console.error('保存标签失败:', error);
+        }
+    };
 
     // 验证名称
     const validateName = async (newName: string) => {
@@ -51,17 +187,26 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
 
     const handleSave = async () => {
         if (!await validateName(name)) {
-            return;  // 如果验证失败，不执行保存
+            return;
         }
 
-        onSave({
-            ...snippet,
-            name,
-            category,
-            description,
-            code,
-            updatedAt: Date.now()
-        });
+        try {
+            // 更新所有标签
+            const allTags = Array.from(new Set([...availableTags, ...categories]));
+            await snippetService.current.saveTags(allTags);
+
+            // 保存代码片段
+            onSave({
+                ...snippet,
+                name,
+                category: categories.join(', '),  // 将多个分类用逗号连接
+                description,
+                code,
+                updatedAt: Date.now()
+            });
+        } catch (error) {
+            console.error('保存失败:', error);
+        }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -117,13 +262,21 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
                     </div>
                     <div className="jp-snippets-edit-field">
                         <label>分类：</label>
-                        <input 
-                            id="snippet-category"
-                            type="text"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                            placeholder="输入分类（可选）"
-                            onKeyDown={(e) => handleInputKeyDown(e, 'snippet-description')}
+                        <MultiSelect
+                            value={categories}
+                            options={availableTags}
+                            onChange={handleTagsChange}
+                            onCreate={async (value: string) => {
+                                const newTags = [...availableTags, value];
+                                try {
+                                    await snippetService.current.saveTags(newTags);
+                                    setAvailableTags(newTags);
+                                    setCategories([...categories, value]);
+                                } catch (error) {
+                                    console.error('保存新标签失败:', error);
+                                }
+                            }}
+                            placeholder="选择或输入分类"
                         />
                     </div>
                     <div className="jp-snippets-edit-field">

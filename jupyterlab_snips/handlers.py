@@ -13,13 +13,21 @@ class SnippetHandler(APIHandler):
             self._save_snippets([])
 
     @tornado.web.authenticated
-    def get(self):
+    def get(self, snippet_id=None):
         # 获取所有代码片段
         snippets = self._load_snippets()
-        self.finish(json.dumps(snippets))
+        if snippet_id:
+            # 如果提供了 ID，返回特定的代码片段
+            snippet = next((s for s in snippets if s['id'] == snippet_id), None)
+            if snippet is None:
+                raise tornado.web.HTTPError(404, f"Snippet {snippet_id} not found")
+            self.finish(json.dumps(snippet))
+        else:
+            # 否则返回所有代码片段
+            self.finish(json.dumps(snippets))
 
     @tornado.web.authenticated
-    def post(self):
+    def post(self, _=None):
         # 保存新的代码片段
         data = self.get_json_body()
         snippets = self._load_snippets()
@@ -28,8 +36,11 @@ class SnippetHandler(APIHandler):
         self.finish(json.dumps({"status": "success"}))
 
     @tornado.web.authenticated
-    def put(self, snippet_id):
+    def put(self, snippet_id=None):
         # 更新代码片段
+        if not snippet_id:
+            raise tornado.web.HTTPError(400, "Snippet ID is required")
+        
         data = self.get_json_body()
         snippets = self._load_snippets()
         
@@ -42,8 +53,11 @@ class SnippetHandler(APIHandler):
         self.finish(json.dumps({"status": "success"}))
 
     @tornado.web.authenticated
-    def delete(self, snippet_id):
+    def delete(self, snippet_id=None):
         # 删除代码片段
+        if not snippet_id:
+            raise tornado.web.HTTPError(400, "Snippet ID is required")
+            
         snippets = self._load_snippets()
         snippets = [s for s in snippets if s['id'] != snippet_id]
         self._save_snippets(snippets)
@@ -79,3 +93,65 @@ class SnippetHandler(APIHandler):
         except OSError as e:
             self.log.error(f"Error saving snippets: {e}")
             raise tornado.web.HTTPError(500, f"Could not save snippets: {e}") 
+
+class TagsHandler(APIHandler):
+    def _get_tags_file(self):
+        # 使用和 snippets 相同的目录
+        jupyter_dir = Path.home() / '.jupyter'
+        snippets_dir = jupyter_dir / 'snippets'
+        snippets_dir.mkdir(parents=True, exist_ok=True)
+        return snippets_dir / 'tags.json'
+
+    @tornado.web.authenticated
+    def get(self, tag_id=None):
+        # 读取 tags.json 文件
+        tags_file = self._get_tags_file()
+        try:
+            if tags_file.exists():
+                with open(tags_file, 'r', encoding='utf-8') as f:
+                    tags = json.load(f)
+            else:
+                tags = []
+        except (json.JSONDecodeError, OSError) as e:
+            self.log.error(f"Error loading tags: {e}")
+            tags = []
+        
+        if tag_id:
+            # 如果提供了 tag_id，返回特定的标签
+            tag = next((t for t in tags if t == tag_id), None)
+            if tag is None:
+                raise tornado.web.HTTPError(404, f"Tag {tag_id} not found")
+            self.finish(json.dumps(tag))
+        else:
+            # 否则返回所有标签
+            self.finish(json.dumps(tags))
+
+    @tornado.web.authenticated
+    def post(self, _=None):
+        # 保存 tags 到 tags.json 文件
+        tags = self.get_json_body()
+        tags_file = self._get_tags_file()
+        
+        try:
+            with open(tags_file, 'w', encoding='utf-8') as f:
+                json.dump(tags, f, ensure_ascii=False, indent=2)
+            self.finish(json.dumps({"status": "success"}))
+        except OSError as e:
+            self.log.error(f"Error saving tags: {e}")
+            raise tornado.web.HTTPError(500, f"Could not save tags: {e}")
+
+def setup_handlers(web_app):
+    host_pattern = ".*$"
+    base_url = web_app.settings["base_url"]
+
+    handlers = [
+        # 先处理 tags 相关的路由
+        (url_path_join(base_url, "jupyterlab-snips", "tags"), TagsHandler),  # 无参数的 tags 路由
+        (url_path_join(base_url, "jupyterlab-snips", "tags", "([^/]+)"), TagsHandler),  # 带参数的 tags 路由
+        
+        # 然后是 snippets 相关的路由
+        (url_path_join(base_url, "jupyterlab-snips", "snippets", "([^/]+)"), SnippetHandler),  # 带参数的 snippets 路由
+        (url_path_join(base_url, "jupyterlab-snips", "snippets"), SnippetHandler),  # 无参数的 snippets 路由
+    ]
+
+    web_app.add_handlers(host_pattern, handlers) 
