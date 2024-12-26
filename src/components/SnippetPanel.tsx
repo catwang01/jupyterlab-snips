@@ -5,6 +5,7 @@ import { SnippetService } from '../services/snippetService';
 import { Snippet } from '../models/types';
 import { JupyterFrontEnd } from '@jupyterlab/application';
 import { EditSnippetPanel } from './EditSnippetPanel';
+import { Dialog, showDialog } from '@jupyterlab/apputils';
 
 declare global {
     interface Window {
@@ -108,8 +109,16 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         };
 
         const handleDelete = async (id: string) => {
-            const confirmed = window.confirm('确定要删除这个代码片段吗？');
-            if (confirmed) {
+            const result = await showDialog({
+                title: '删除确认',
+                body: '确定要删除这个代码片段吗？',
+                buttons: [
+                    Dialog.cancelButton({ label: '取消' }),
+                    Dialog.warnButton({ label: '删除' })
+                ]
+            });
+
+            if (result.button.accept) {
                 try {
                     await snippetService.current.deleteSnippet(id);
                     
@@ -122,7 +131,11 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                     
                     loadSnippets();
                 } catch (error) {
-                    console.error('删除失败:', error);
+                    void showDialog({
+                        title: '错误',
+                        body: '删除失败: ' + error,
+                        buttons: [Dialog.okButton({ label: '确定' })]
+                    });
                 }
             }
         };
