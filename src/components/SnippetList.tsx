@@ -1,9 +1,11 @@
-import React, { Key } from 'react';
+import React from 'react';
 import { Snippet } from '../models/types';
+import { MultiSelect } from './MultiSelect';
 
 interface SnippetListProps {
     snippets: Snippet[];
     searchText: string;
+    setSearchText: (value: string) => void;
     selectedCategories: string[];
     onCategoriesChange: (categories: string[]) => void;
     onRefresh: () => void;
@@ -15,6 +17,7 @@ interface SnippetListProps {
 export const SnippetList: React.FC<SnippetListProps> = ({
     snippets,
     searchText,
+    setSearchText,
     selectedCategories,
     onCategoriesChange,
     onRefresh,
@@ -22,19 +25,11 @@ export const SnippetList: React.FC<SnippetListProps> = ({
     onEdit,
     onDelete
 }) => {
-    const categories: string[] = Array.from(
+    const availableTags: string[] = Array.from(
         new Set(
             snippets.flatMap((s: Snippet) => s.tags || [])
         )
     );
-
-    const handleCategoryToggle = (category: string) => {
-        if (selectedCategories.includes(category)) {
-            onCategoriesChange(selectedCategories.filter(c => c !== category));
-        } else {
-            onCategoriesChange([...selectedCategories, category]);
-        }
-    };
 
     const filteredSnippets = snippets.filter(snippet => {
         const matchesSearch = searchText ? 
@@ -51,22 +46,23 @@ export const SnippetList: React.FC<SnippetListProps> = ({
     return (
         <div className="jp-snippets-container">
             <div className="jp-snippets-header">
-                <div className="jp-snippets-categories">
-                    {categories.map((category: string) => (
-                        <label
-                            key={category as Key}
-                            className={`jp-snippets-category-checkbox ${
-                                selectedCategories.includes(category) ? 'active' : ''
-                            }`}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={selectedCategories.includes(category)}
-                                onChange={() => handleCategoryToggle(category)}
-                            />
-                            {category}
-                        </label>
-                    ))}
+                <div className="jp-snippets-filter">
+                    <div className="jp-snippets-search">
+                        <input
+                            type="text"
+                            value={searchText}
+                            onChange={(e) => setSearchText(e.target.value)}
+                            placeholder="搜索代码片段..."
+                        />
+                    </div>
+                    <div className="jp-snippets-tag-filter">
+                        <MultiSelect
+                            value={selectedCategories}
+                            options={availableTags}
+                            onChange={onCategoriesChange}
+                            placeholder="选择标签过滤..."
+                        />
+                    </div>
                 </div>
                 <button 
                     className="jp-snippets-refresh"

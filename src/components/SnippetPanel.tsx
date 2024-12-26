@@ -129,17 +129,10 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
 
         return (
             <div className="jp-snippets-panel">
-                <div className="jp-snippets-search">
-                    <input
-                        type="text"
-                        value={searchText}
-                        onChange={(e) => setSearchText(e.target.value)}
-                        placeholder="搜索代码片段..."
-                    />
-                </div>
                 <SnippetList
                     snippets={snippets}
                     searchText={searchText}
+                    setSearchText={setSearchText}
                     selectedCategories={selectedCategories}
                     onCategoriesChange={setSelectedCategories}
                     onRefresh={loadSnippets}
