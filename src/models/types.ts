@@ -2,7 +2,7 @@ export interface Snippet {
     id: string;
     name: string;
     code: string;
-    category?: string;
+    tags?: string[];
     description?: string;
     createdAt: number;
     updatedAt: number;
@@ -17,6 +17,6 @@ export interface SnippetCategory {
 export interface SaveSnippetOptions {
     name: string;
     code: string;
-    category?: string;
+    tags?: string[];
     description?: string;
 } 

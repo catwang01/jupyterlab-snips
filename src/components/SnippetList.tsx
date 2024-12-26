@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Key } from 'react';
 import { Snippet } from '../models/types';
 
 interface SnippetListProps {
@@ -22,11 +22,9 @@ export const SnippetList: React.FC<SnippetListProps> = ({
     onEdit,
     onDelete
 }) => {
-    const categories = Array.from(
+    const categories: string[] = Array.from(
         new Set(
-            snippets
-                .map(s => s.category)
-                .filter((category): category is string => category !== undefined && category !== null)
+            snippets.flatMap((s: Snippet) => s.tags || [])
         )
     );
 
@@ -45,7 +43,7 @@ export const SnippetList: React.FC<SnippetListProps> = ({
             true;
             
         const matchesCategory = selectedCategories.length === 0 || 
-            (snippet.category && selectedCategories.includes(snippet.category));
+            (snippet.tags && snippet.tags.some(tag => selectedCategories.includes(tag)));
 
         return matchesSearch && matchesCategory;
     });
@@ -54,9 +52,9 @@ export const SnippetList: React.FC<SnippetListProps> = ({
         <div className="jp-snippets-container">
             <div className="jp-snippets-header">
                 <div className="jp-snippets-categories">
-                    {categories.map(category => (
+                    {categories.map((category: string) => (
                         <label
-                            key={category}
+                            key={category as Key}
                             className={`jp-snippets-category-checkbox ${
                                 selectedCategories.includes(category) ? 'active' : ''
                             }`}
@@ -111,6 +109,8 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
         return code;
     };
 
+    const tags = snippet.tags || [];
+
     return (
         <div 
             className="jp-snippets-item"
@@ -118,9 +118,13 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
         >
             <div className="jp-snippets-item-header">
                 <h3>{snippet.name}</h3>
-                {snippet.category && (
-                    <span className="jp-snippets-tag">{snippet.category}</span>
-                )}
+                <div className="jp-snippets-tags">
+                    {tags.map(tag => (
+                        <span key={tag} className="jp-snippets-tag">
+                            {tag}
+                        </span>
+                    ))}
+                </div>
             </div>
             {snippet.description && <p>{snippet.description}</p>}
             <div className="jp-snippets-item-actions">

@@ -87,15 +87,15 @@ const plugin: JupyterFrontEndPlugin<void> = {
                     const code = cell.model.sharedModel.source;
                     
                     // 创建新的代码片段
-                    const newSnippet = {
+                    const newSnippet: Snippet = {
                         id: crypto.randomUUID(),
                         name: '',
                         code,
-                        category: '',
+                        tags: [],
                         description: '',
                         createdAt: Date.now(),
                         updatedAt: Date.now()
-                    } as Snippet;
+                    };
 
                     const editPanel = new EditSnippetPanel({
                         snippet: newSnippet,

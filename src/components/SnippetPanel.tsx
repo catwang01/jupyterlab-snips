@@ -88,11 +88,8 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                         
                         // 更新标签列表
                         const allSnippets = await snippetService.current.getSnippets();
-                        const allTags = Array.from(new Set(
-                            allSnippets
-                                .map(s => s.category)
-                                .filter((c): c is string => typeof c === 'string')
-                                .reduce<string[]>((acc, curr) => [...acc, ...curr.split(', ')], [])
+                        const allTags: string[] = Array.from(new Set(
+                            allSnippets.flatMap((s: Snippet) => s.tags || [])
                         ));
                         await snippetService.current.saveTags(allTags);
                         
@@ -118,11 +115,8 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                     
                     // 更新标签列表
                     const allSnippets = await snippetService.current.getSnippets();
-                    const allTags = Array.from(new Set(
-                        allSnippets
-                            .map(s => s.category)
-                            .filter((c): c is string => typeof c === 'string')
-                            .reduce<string[]>((acc, curr) => [...acc, ...curr.split(', ')], [])
+                    const allTags: string[] = Array.from(new Set(
+                        allSnippets.flatMap((s: Snippet) => s.tags || [])
                     ));
                     await snippetService.current.saveTags(allTags);
                     

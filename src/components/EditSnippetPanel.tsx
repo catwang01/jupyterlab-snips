@@ -124,14 +124,13 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
 }) => {
     const [name, setName] = useState(snippet.name);
     const [nameError, setNameError] = useState<string | null>(null);
-    const [categories, setCategories] = useState<string[]>(snippet.category ? [snippet.category] : []);
+    const [tags, setTags] = useState<string[]>(snippet.tags || []);
     const [description, setDescription] = useState(snippet.description || '');
     const [code, setCode] = useState(snippet.code);
+    const [availableTags, setAvailableTags] = useState<string[]>([]);
     const snippetService = useRef(new SnippetService());
 
-    // 获取所有可用标签
-    const [availableTags, setAvailableTags] = useState<string[]>([]);
-    
+    // 只在组件加载时获取一次可用标签
     useEffect(() => {
         const loadTags = async () => {
             try {
@@ -144,17 +143,9 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
         loadTags();
     }, []);
 
-    // 处理标签变化
-    const handleTagsChange = async (newTags: string[]) => {
-        setCategories(newTags);
-        // 保存新的标签到后端
-        try {
-            const allTags = Array.from(new Set([...availableTags, ...newTags]));
-            await snippetService.current.saveTags(allTags);
-            setAvailableTags(allTags);
-        } catch (error) {
-            console.error('保存标签失败:', error);
-        }
+    // 简化标签变化处理
+    const handleTagsChange = (newTags: string[]) => {
+        setTags(newTags);
     };
 
     // 验证名称
@@ -191,15 +182,14 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
         }
 
         try {
-            // 更新所有标签
-            const allTags = Array.from(new Set([...availableTags, ...categories]));
+            // 保存代码片段时一并更新标签
+            const allTags = Array.from(new Set([...availableTags, ...tags]));
             await snippetService.current.saveTags(allTags);
 
-            // 保存代码片段
             onSave({
                 ...snippet,
                 name,
-                category: categories.join(', '),  // 将多个分类用逗号连接
+                tags,
                 description,
                 code,
                 updatedAt: Date.now()
@@ -261,22 +251,16 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
                         </div>
                     </div>
                     <div className="jp-snippets-edit-field">
-                        <label>分类：</label>
+                        <label>标签：</label>
                         <MultiSelect
-                            value={categories}
+                            value={tags}
                             options={availableTags}
                             onChange={handleTagsChange}
-                            onCreate={async (value: string) => {
-                                const newTags = [...availableTags, value];
-                                try {
-                                    await snippetService.current.saveTags(newTags);
-                                    setAvailableTags(newTags);
-                                    setCategories([...categories, value]);
-                                } catch (error) {
-                                    console.error('保存新标签失败:', error);
-                                }
+                            onCreate={(value: string) => {
+                                setTags([...tags, value]);
+                                setAvailableTags([...availableTags, value]);
                             }}
-                            placeholder="选择或输入分类"
+                            placeholder="选择或输入标签"
                         />
                     </div>
                     <div className="jp-snippets-edit-field">
