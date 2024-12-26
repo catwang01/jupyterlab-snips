@@ -52,12 +52,12 @@ export const MultiSelect: React.FC<MultiSelectProps> = ({
 
     return (
         <div className="jp-snippets-multi-select">
-            <div className="jp-snippets-tags">
+            <div>
                 {value.map(tag => (
-                    <span key={tag} className="jp-snippets-tag">
+                    <span key={tag} className="jp-snippets-select-tag">
                         {tag}
                         <span 
-                            className="jp-snippets-tag-remove"
+                            className="jp-snippets-select-tag-remove"
                             onClick={() => removeTag(tag)}
                         >
                             ×

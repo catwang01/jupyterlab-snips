@@ -623,13 +623,16 @@
     opacity: 1;
 }
 
-/* 美化 MultiSelect 组件 */
+/* MultiSelect 组件样式 */
 .jp-snippets-multi-select {
     position: relative;
     width: 100%;
+    height: 28px;
 }
 
-.jp-snippets-tags {
+.jp-snippets-multi-select > div {
+    width: 100%;
+    height: 100%;
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
@@ -637,73 +640,25 @@
     border: 1px solid var(--jp-border-color1);
     border-radius: 4px;
     background: var(--jp-input-background);
-    min-height: 32px;
     align-items: center;
-    cursor: text;
 }
 
-/* 当没有标签时完全隐藏标签容器 */
-.jp-snippets-tags.empty {
-    display: none;
-}
-
-.jp-snippets-tags:focus-within {
+.jp-snippets-multi-select > div:focus-within {
     border-color: var(--jp-brand-color1);
     box-shadow: inset 0 0 0 1px var(--jp-brand-color1);
 }
 
-.jp-snippets-tag {
-    display: inline-flex;
-    align-items: center;
-    background: var(--jp-layout-color2);
-    border: 1px solid var(--jp-border-color2);
-    border-radius: 12px;
-    padding: 2px 8px;
-    font-size: 12px;
-    line-height: 16px;
-    color: var(--jp-ui-font-color1);
-    gap: 4px;
-    transition: all 0.2s ease;
-}
-
-.jp-snippets-tag:hover {
-    background: var(--jp-layout-color3);
-}
-
-.jp-snippets-tag-remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    cursor: pointer;
-    opacity: 0.7;
-    margin-left: 2px;
-    font-size: 14px;
-    transition: all 0.2s ease;
-}
-
-.jp-snippets-tag-remove:hover {
-    opacity: 1;
-    background: var(--jp-layout-color4);
-}
-
-.jp-snippets-tags input {
+.jp-snippets-multi-select input {
     border: none !important;
     outline: none !important;
-    padding: 4px !important;
+    padding: 0 !important;
     background: transparent !important;
     flex: 1;
     min-width: 60px;
+    height: 100%;
     font-size: 12px;
-    line-height: 16px;
     color: var(--jp-ui-font-color0);
     box-shadow: none !important;
-}
-
-.jp-snippets-tags input::placeholder {
-    color: var(--jp-ui-font-color2);
 }
 
 .jp-snippets-options {
@@ -737,30 +692,31 @@
 /* 调整搜索框和标签选择器的布局 */
 .jp-snippets-filter {
     display: flex;
-    gap: 12px;
+    flex-direction: column;
+    gap: 8px;
     padding: 8px;
     background: var(--jp-layout-color1);
     border-bottom: 1px solid var(--jp-border-color1);
 }
 
 .jp-snippets-search {
-    flex: 1;
+    width: 100%;
 }
 
-.jp-snippets-tag-filter {
-    flex: 1;
+/* 统一输入框样式 */
+.jp-snippets-search input,
+.jp-snippets-multi-select {
+    width: 100%;
+    height: 28px;
 }
 
 .jp-snippets-search input {
-    width: 100%;
-    padding: 4px 8px;
+    padding: 0 8px;
     border: 1px solid var(--jp-border-color1);
     border-radius: 4px;
     background: var(--jp-input-background);
     font-size: 12px;
-    line-height: 20px;
     color: var(--jp-ui-font-color0);
-    transition: all 0.2s ease;
 }
 
 .jp-snippets-search input:focus {

@@ -55,14 +55,12 @@ export const SnippetList: React.FC<SnippetListProps> = ({
                             placeholder="搜索代码片段..."
                         />
                     </div>
-                    <div className="jp-snippets-tag-filter">
-                        <MultiSelect
-                            value={selectedCategories}
-                            options={availableTags}
-                            onChange={onCategoriesChange}
-                            placeholder="选择标签过滤..."
-                        />
-                    </div>
+                    <MultiSelect
+                        value={selectedCategories}
+                        options={availableTags}
+                        onChange={onCategoriesChange}
+                        placeholder="选择标签过滤..."
+                    />
                 </div>
                 <button 
                     className="jp-snippets-refresh"
