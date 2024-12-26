@@ -11,17 +11,26 @@ import { SnippetService } from './services/snippetService';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { SnippetPanel } from './components/SnippetPanel';
 import { Snippet } from './models/types';
+import { ICompletionProviderManager } from '@jupyterlab/completer';
+import { SnippetCompleterProvider } from './services/completerService';
 
 const plugin: JupyterFrontEndPlugin<void> = {
     id: 'jupyterlab-snips:plugin',
     autoStart: true,
-    requires: [ICommandPalette, INotebookTracker, IMainMenu, ILayoutRestorer],
+    requires: [
+        ICommandPalette,
+        INotebookTracker,
+        IMainMenu,
+        ILayoutRestorer,
+        ICompletionProviderManager
+    ],
     activate: (
         app: JupyterFrontEnd,
         palette: ICommandPalette,
         notebookTracker: INotebookTracker,
         mainMenu: IMainMenu,
-        restorer: ILayoutRestorer
+        restorer: ILayoutRestorer,
+        completionManager: ICompletionProviderManager
     ) => {
         console.log('JupyterLab extension jupyterlab-snips is activated!');
 
@@ -133,6 +142,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
         mainMenu.fileMenu.addGroup([
             { command: saveCommand }
         ], 30);
+
+        // 注册代码片段补全提供者
+        const provider = new SnippetCompleterProvider();
+        completionManager.registerProvider(provider);
     }
 };
 
