@@ -1,5 +1,5 @@
 {
-  "name": "jupyterlab-snip",
+  "name": "jupyterlab-snips",
   "version": "0.1.0",
   "description": "JupyterLab 代码片段插件",
   "keywords": [
@@ -7,9 +7,9 @@
     "jupyterlab",
     "jupyterlab-extension"
   ],
-  "homepage": "https://github.com/your-name/jupyterlab-snippets",
+  "homepage": "https://github.com/your-name/jupyterlab-snips",
   "bugs": {
-    "url": "https://github.com/your-name/jupyterlab-snippets/issues"
+    "url": "https://github.com/your-name/jupyterlab-snips/issues"
   },
   "license": "BSD-3-Clause",
   "author": {
@@ -25,7 +25,7 @@
   "style": "style/index.css",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-name/jupyterlab-snippets.git"
+    "url": "https://github.com/your-name/jupyterlab-snips.git"
   },
   "scripts": {
     "build": "jlpm clean && jlpm build:lib && jlpm build:labextension",
@@ -61,6 +61,6 @@
   ],
   "jupyterlab": {
     "extension": true,
-    "outputDir": "jupyterlab_snip/labextension"
+    "outputDir": "jupyterlab_snips/labextension"
   }
 }

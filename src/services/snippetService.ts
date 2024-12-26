@@ -1,7 +1,7 @@
 import { Snippet } from '../models/types';
 
 export class SnippetService {
-    private readonly STORAGE_KEY = 'jupyterlab-snippets';
+    private readonly STORAGE_KEY = 'jupyterlab-snips';
 
     async saveSnippet(snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>): Promise<Snippet> {
         try {

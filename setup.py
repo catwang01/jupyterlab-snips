@@ -1,5 +1,5 @@
 """
-jupyterlab-snippets setup
+jupyterlab-snips setup
 """
 import json
 from pathlib import Path
@@ -7,7 +7,7 @@ from pathlib import Path
 import setuptools
 
 HERE = Path(__file__).parent.resolve()
-name = "jupyterlab-snippets"
+name = "jupyterlab-snips"
 
 # Get version
 with (HERE / "package.json").open() as f:
@@ -16,7 +16,7 @@ with (HERE / "package.json").open() as f:
 setup_args = dict(
     name=name,
     version=version,
-    url="https://github.com/your-name/jupyterlab-snippets",
+    url="https://github.com/your-name/jupyterlab-snips",
     author="Your Name",
     description="A JupyterLab extension for managing code snippets",
     long_description=Path("README.md").read_text() if Path("README.md").exists() else "",

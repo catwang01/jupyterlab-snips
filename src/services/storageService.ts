@@ -1,7 +1,7 @@
 import { Snippet } from '../models/types';
 
 export class StorageService {
-    private readonly STORAGE_KEY = 'jupyterlab-snip';
+    private readonly STORAGE_KEY = 'jupyterlab-snips';
 
     constructor() {
         // 初始化存储

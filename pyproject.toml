@@ -8,9 +8,9 @@ requires = [
 build-backend = "hatchling.build"
 
 [project]
-name = "jupyterlab-snippets"
+name = "jupyterlab-snips"
 version = "0.1.0"
-description = "JupyterLab 代码片段管理插件"
+description = "JupyterLab 代码片段插件"
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.7"
@@ -22,11 +22,11 @@ dependencies = [
 ]
 
 [tool.hatch.build]
-artifacts = ["jupyterlab-snippets/labextension"]
+artifacts = ["jupyterlab_snips/labextension"]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"jupyterlab_snippets/labextension" = "share/jupyter/labextensions/jupyterlab-snippets"
-"install.json" = "share/jupyter/labextensions/jupyterlab-snippets/install.json"
+"jupyterlab_snips/labextension" = "share/jupyter/labextensions/jupyterlab_snips"
+"install.json" = "share/jupyter/labextensions/jupyterlab_snips/install.json"
 
 [tool.jupyter-builder]
 dependencies = ["hatch-jupyter-builder>=0.5.0"]
@@ -34,12 +34,12 @@ build-function = "hatch_jupyter_builder.npm_builder"
 build-kwargs = { build_cmd = "build:prod" }
 editable-build-kwargs = { build_cmd = "build" }
 ensured-targets = [
-    "jupyterlab-snippets/labextension/package.json",
+    "jupyterlab_snips/labextension/package.json",
 ]
-skip-if-exists = ["jupyterlab-snippets/labextension/static/style.js"]
+skip-if-exists = ["jupyterlab_snips/labextension/static/style.js"]
 
 [tool.hatch.build.hooks.version]
-path = "jupyterlab-snippets/_version.py"
+path = "jupyterlab_snips/_version.py"
 
 [tool.hatch.build.targets.sdist]
 exclude = [".github"] 

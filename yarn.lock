@@ -3208,9 +3208,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jupyterlab-snip@workspace:.":
+"jupyterlab-snips@workspace:.":
   version: 0.0.0-use.local
-  resolution: "jupyterlab-snip@workspace:."
+  resolution: "jupyterlab-snips@workspace:."
   dependencies:
     "@jupyterlab/application": ^4.3.4
     "@jupyterlab/apputils": ^4.3.4

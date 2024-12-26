@@ -37,10 +37,14 @@ lib/
 tsconfig.tsbuildinfo
 
 # JupyterLab
-jupyterlab_snip/labextension/
-jupyterlab_snip/labextension/package.json
-jupyterlab_snip/labextension/static/
-jupyterlab_snip/labextension/build_log.json
+jupyterlab_snips/labextension/
+jupyterlab_snips/labextension/package.json
+jupyterlab_snips/labextension/static/
+jupyterlab_snips/labextension/build_log.json
+jupyterlab_snips/_version.py
+jupyterlab_snips/*.egg-info/
+jupyterlab_snips/dist/
+jupyterlab_snips/build/
 
 # IDE
 .idea/

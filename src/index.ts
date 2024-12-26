@@ -9,7 +9,7 @@ import { SnippetService } from './services/snippetService';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 
 const plugin: JupyterFrontEndPlugin<void> = {
-    id: 'jupyterlab-snip:plugin',
+    id: 'jupyterlab-snips:plugin',
     autoStart: true,
     requires: [ICommandPalette, INotebookTracker, IMainMenu],
     activate: (
@@ -18,7 +18,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         notebookTracker: INotebookTracker,
         mainMenu: IMainMenu
     ) => {
-        console.log('JupyterLab extension jupyterlab-snippets is activated!');
+        console.log('JupyterLab extension jupyterlab-snips is activated!');
 
         // 初始化 SnippetService
         const snippetService = new SnippetService();

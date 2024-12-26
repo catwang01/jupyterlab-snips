@@ -28,7 +28,7 @@
 ## 安装
 
 ```bash
-pip install jupyterlab-snippets
+pip install jupyterlab-snips
 ```
 
 ## 使用方法
@@ -98,8 +98,8 @@ def train_model(X, y, model):
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-name/jupyterlab-snippets
-cd jupyterlab-snippets
+git clone https://github.com/your-name/jupyterlab-snips
+cd jupyterlab-snips
 
 # 安装依赖
 jlpm install
@@ -121,7 +121,7 @@ jlpm watch
 ### 项目结构
 
 ```
-jupyterlab-snippets/
+jupyterlab-snips/
 ├── package.json           # 项目配置和依赖
 ├── tsconfig.json         # TypeScript 配置
 ├── src/                  # 源代码目录
