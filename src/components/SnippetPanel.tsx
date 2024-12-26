@@ -3,6 +3,14 @@ import { ReactWidget } from '@jupyterlab/apputils';
 import { SnippetList } from './SnippetList';
 import { SnippetService } from '../services/snippetService';
 import { Snippet } from '../models/types';
+import { showSaveSnippetDialog } from './SaveSnippetDialog';
+import { JupyterFrontEnd } from '@jupyterlab/application';
+
+declare global {
+    interface Window {
+        jupyterapp?: JupyterFrontEnd;
+    }
+}
 
 interface SnippetPanelComponentProps {
     onRefresh?: () => void;
@@ -38,6 +46,40 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
             loadSnippets();
         }, [loadSnippets]);
 
+        const handleInsert = async (code: string) => {
+            // 获取当前活动的笔记本和单元格
+            const notebook = await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
+            if (notebook) {
+                await window.jupyterapp?.commands.execute('notebook:replace-selection', {
+                    text: code
+                });
+            }
+        };
+
+        const handleEdit = async (snippet: Snippet) => {
+            const result = await showSaveSnippetDialog(snippet.code, {
+                name: snippet.name,
+                category: snippet.category,
+                description: snippet.description
+            });
+
+            if (result) {
+                await snippetService.current.updateSnippet(snippet.id, {
+                    ...result,
+                    code: snippet.code
+                });
+                loadSnippets();
+            }
+        };
+
+        const handleDelete = async (id: string) => {
+            const confirmed = window.confirm('确定要删除这个代码片段吗？');
+            if (confirmed) {
+                await snippetService.current.deleteSnippet(id);
+                loadSnippets();
+            }
+        };
+
         return (
             <div className="jp-snippets-panel">
                 <div className="jp-snippets-search">
@@ -55,6 +97,9 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                         selectedCategory={selectedCategory}
                         onCategoryChange={(category) => setSelectedCategory(category)}
                         onRefresh={loadSnippets}
+                        onInsert={handleInsert}
+                        onEdit={handleEdit}
+                        onDelete={handleDelete}
                     />
                 </div>
             </div>

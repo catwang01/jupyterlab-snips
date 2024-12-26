@@ -109,19 +109,31 @@ class DialogWidget extends ReactWidget {
     }
 }
 
-export async function showSaveSnippetDialog(code: string): Promise<{
+export async function showSaveSnippetDialog(
+    code: string,
+    initialValues?: {
+        name?: string;
+        category?: string;
+        description?: string;
+    }
+): Promise<{
     name: string;
     category: string;
     description: string;
 } | null> {
-    const dialogWidget = new DialogWidget({ code });
+    const dialogWidget = new DialogWidget({ 
+        code,
+        name: initialValues?.name || '',
+        category: initialValues?.category || '',
+        description: initialValues?.description || ''
+    });
     
     const dialog = new Dialog({
-        title: '保存代码片段',
+        title: initialValues ? '编辑代码片段' : '保存代码片段',
         body: dialogWidget,
         buttons: [
             Dialog.cancelButton(),
-            Dialog.okButton({ label: '保存' })
+            Dialog.okButton({ label: initialValues ? '更新' : '保存' })
         ]
     });
 

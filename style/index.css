@@ -160,4 +160,20 @@
 
 .jp-snippets-refresh:hover {
     background: var(--jp-layout-color2);
+}
+
+.jp-code-preview {
+    margin: 8px 0;
+    padding: 8px;
+    background: var(--jp-cell-editor-background);
+    border-radius: 4px;
+    overflow: auto;
+}
+
+.jp-code-preview pre {
+    margin: 0;
+    white-space: pre-wrap;
+    font-family: var(--jp-code-font-family);
+    font-size: var(--jp-code-font-size);
+    line-height: var(--jp-code-line-height);
 } 

@@ -51,6 +51,43 @@ export class SnippetService {
         return response.json();
     }
 
+    async updateSnippet(id: string, snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>): Promise<Snippet> {
+        const response = await ServerConnection.makeRequest(
+            `${this.baseUrl}/${id}`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...snippet,
+                    updatedAt: Date.now()
+                })
+            },
+            this.serverSettings
+        );
+
+        if (!response.ok) {
+            throw new Error('更新代码片段失败');
+        }
+
+        return response.json();
+    }
+
+    async deleteSnippet(id: string): Promise<void> {
+        const response = await ServerConnection.makeRequest(
+            `${this.baseUrl}/${id}`,
+            {
+                method: 'DELETE'
+            },
+            this.serverSettings
+        );
+
+        if (!response.ok) {
+            throw new Error('删除代码片段失败');
+        }
+    }
+
     initialize(): void {
         // 初始化检查
         this.getSnippets().catch(console.error);

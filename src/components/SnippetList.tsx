@@ -7,6 +7,9 @@ interface SnippetListProps {
     selectedCategory: string | null;
     onCategoryChange: (category: string | null) => void;
     onRefresh: () => void;
+    onInsert: (code: string) => void;
+    onEdit: (snippet: Snippet) => void;
+    onDelete: (id: string) => void;
 }
 
 export const SnippetList: React.FC<SnippetListProps> = ({
@@ -14,7 +17,10 @@ export const SnippetList: React.FC<SnippetListProps> = ({
     searchText,
     selectedCategory,
     onCategoryChange,
-    onRefresh
+    onRefresh,
+    onInsert,
+    onEdit,
+    onDelete
 }) => {
     const categories = Array.from(
         new Set(
@@ -73,14 +79,17 @@ export const SnippetList: React.FC<SnippetListProps> = ({
                         {snippet.description && (
                             <p>{snippet.description}</p>
                         )}
+                        <div className="jp-code-preview">
+                            <pre>{snippet.code}</pre>
+                        </div>
                         <div className="jp-snippets-item-actions">
-                            <button onClick={() => {/* 实现插入代码 */}}>
+                            <button onClick={() => onInsert(snippet.code)}>
                                 插入
                             </button>
-                            <button onClick={() => {/* 实现编辑代码 */}}>
+                            <button onClick={() => onEdit(snippet)}>
                                 编辑
                             </button>
-                            <button onClick={() => {/* 实现删除代码 */}}>
+                            <button onClick={() => onDelete(snippet.id)}>
                                 删除
                             </button>
                         </div>

@@ -27,6 +27,28 @@ class SnippetHandler(APIHandler):
         self._save_snippets(snippets)
         self.finish(json.dumps({"status": "success"}))
 
+    @tornado.web.authenticated
+    def put(self, snippet_id):
+        # 更新代码片段
+        data = self.get_json_body()
+        snippets = self._load_snippets()
+        
+        for i, snippet in enumerate(snippets):
+            if snippet['id'] == snippet_id:
+                snippets[i] = {**snippet, **data}
+                break
+        
+        self._save_snippets(snippets)
+        self.finish(json.dumps({"status": "success"}))
+
+    @tornado.web.authenticated
+    def delete(self, snippet_id):
+        # 删除代码片段
+        snippets = self._load_snippets()
+        snippets = [s for s in snippets if s['id'] != snippet_id]
+        self._save_snippets(snippets)
+        self.finish(json.dumps({"status": "success"}))
+
     def _get_snippets_file(self):
         # 获取存储文件路径
         # 使用 jupyter 配置目录来存储代码片段
