@@ -1,6 +1,7 @@
 import React from 'react';
 import { Snippet } from '../models/types';
 import { MultiSelect } from './MultiSelect';
+import { getTranslation } from '../i18n';
 
 interface SnippetListProps {
     snippets: Snippet[];
@@ -27,6 +28,7 @@ export const SnippetList: React.FC<SnippetListProps> = ({
     onDelete,
     onNew
 }) => {
+    const t = getTranslation();
     const availableTags: string[] = Array.from(
         new Set(
             snippets.flatMap((s: Snippet) => s.tags || [])
@@ -34,11 +36,13 @@ export const SnippetList: React.FC<SnippetListProps> = ({
     );
 
     const filteredSnippets = snippets.filter(snippet => {
+        // Filter by search text
         const matchesSearch = searchText ? 
             snippet.name.toLowerCase().includes(searchText.toLowerCase()) ||
             snippet.description?.toLowerCase().includes(searchText.toLowerCase()) :
             true;
             
+        // Filter by selected categories/tags
         const matchesCategory = selectedCategories.length === 0 || 
             (snippet.tags && snippet.tags.some(tag => selectedCategories.includes(tag)));
 
@@ -54,14 +58,14 @@ export const SnippetList: React.FC<SnippetListProps> = ({
                             type="text"
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
-                            placeholder="搜索代码片段..."
+                            placeholder={t.search.placeholder}
                         />
                     </div>
                     <MultiSelect
                         value={selectedCategories}
                         options={availableTags}
                         onChange={onCategoriesChange}
-                        placeholder="选择标签过滤..."
+                        placeholder={t.search.tagPlaceholder}
                     />
                 </div>
                 <div className="jp-snippets-actions">
@@ -69,13 +73,13 @@ export const SnippetList: React.FC<SnippetListProps> = ({
                         className="jp-snippets-button"
                         onClick={onNew}
                     >
-                        新建
+                        {t.buttons.new}
                     </button>
                     <button 
                         className="jp-snippets-button"
                         onClick={onRefresh}
                     >
-                        刷新
+                        {t.buttons.refresh}
                     </button>
                 </div>
             </div>
@@ -103,16 +107,17 @@ interface SnippetItemProps {
 }
 
 const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, onDelete }) => {
-    // 获取预览代码
+    // Get preview code
     const getPreviewCode = (code: string) => {
         const lines = code.split('\n');
         if (lines.length > 10) {
-            return lines.slice(0, 10).join('\n') + '\n...';
+            return lines.slice(0, 10).join('\n') + t.preview.more;
         }
         return code;
     };
 
     const tags = snippet.tags || [];
+    const t = getTranslation();
 
     return (
         <div 
@@ -132,9 +137,15 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
             </div>
             {snippet.description && <p>{snippet.description}</p>}
             <div className="jp-snippets-item-actions">
-                <button className="jp-snippets-button" onClick={() => onInsert(snippet.code)}>插入</button>
-                <button className="jp-snippets-button" onClick={() => onEdit(snippet)}>编辑</button>
-                <button className="jp-snippets-button" onClick={() => onDelete(snippet.id)}>删除</button>
+                <button className="jp-snippets-button" onClick={() => onInsert(snippet.code)}>
+                    {t.buttons.insert}
+                </button>
+                <button className="jp-snippets-button" onClick={() => onEdit(snippet)}>
+                    {t.buttons.edit}
+                </button>
+                <button className="jp-snippets-button" onClick={() => onDelete(snippet.id)}>
+                    {t.buttons.delete}
+                </button>
             </div>
         </div>
     );

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ReactWidget } from '@jupyterlab/apputils';
 import { Snippet } from '../models/types';
 import { SnippetService } from '../services/snippetService';
+import { getTranslation } from '../i18n';
 
 interface EditSnippetPanelProps {
     snippet: Snippet;
@@ -9,7 +10,7 @@ interface EditSnippetPanelProps {
     onCancel: () => void;
 }
 
-// 自定义多选输入组件
+// Custom multi-select input component
 interface MultiSelectProps {
     value: string[];
     options: string[];
@@ -122,6 +123,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
     onSave,
     onCancel
 }) => {
+    const t = getTranslation();
     const [name, setName] = useState(snippet.name);
     const [nameError, setNameError] = useState<string | null>(null);
     const [tags, setTags] = useState<string[]>(snippet.tags || []);
@@ -130,38 +132,38 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
     const [availableTags, setAvailableTags] = useState<string[]>([]);
     const snippetService = useRef(new SnippetService());
 
-    // 只在组件加载时获取一次可用标签
+    // Load available tags only once when component mounts
     useEffect(() => {
         const loadTags = async () => {
             try {
                 const tags = await snippetService.current.getTags();
                 setAvailableTags(tags);
             } catch (error) {
-                console.error('加载标签失败:', error);
+                console.error(t.dialog.loadTagsError, error);
             }
         };
         loadTags();
     }, []);
 
-    // 简化标签变化处理
+    // Handle tag changes
     const handleTagsChange = (newTags: string[]) => {
         setTags(newTags);
     };
 
-    // 验证名称
+    // Validate name
     const validateName = async (newName: string) => {
         if (!newName.trim()) {
-            setNameError('名称不能为空');
+            setNameError(t.editPanel.nameError);
             return false;
         }
 
         const exists = await snippetService.current.checkNameExists(
             newName,
-            snippet.id  // 编辑时排除当前片段
+            snippet.id
         );
 
         if (exists) {
-            setNameError('该名称已存在');
+            setNameError(t.editPanel.nameExistsError);
             return false;
         }
 
@@ -169,7 +171,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
         return true;
     };
 
-    // 处理名称变化
+    // Handle name change
     const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newName = e.target.value;
         setName(newName);
@@ -182,7 +184,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
         }
 
         try {
-            // 保存代码片段时一并更新标签
+            // Update tags when saving snippet
             const allTags = Array.from(new Set([...availableTags, ...tags]));
             await snippetService.current.saveTags(allTags);
 
@@ -195,7 +197,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
                 updatedAt: Date.now()
             });
         } catch (error) {
-            console.error('保存失败:', error);
+            console.error(t.dialog.saveError, error);
         }
     };
 
@@ -226,19 +228,21 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
                 onKeyDown={handleKeyDown}
             >
                 <div className="jp-snippets-modal-header">
-                    <h2>{snippet.id ? '编辑代码片段' : '新建代码片段'}</h2>
-                    <button className="jp-snippets-modal-close" onClick={onCancel}>×</button>
+                    <h2>{snippet.id ? t.editPanel.title : t.editPanel.newTitle}</h2>
+                    <button className="jp-snippets-modal-close" onClick={onCancel}>
+                        {t.editPanel.close}
+                    </button>
                 </div>
                 <div className="jp-snippets-modal-body">
                     <div className="jp-snippets-edit-field">
-                        <label>名称：</label>
+                        <label>{t.editPanel.nameLabel}</label>
                         <div className="jp-snippets-input-wrapper">
                             <input 
                                 id="snippet-name"
                                 type="text"
                                 value={name}
                                 onChange={handleNameChange}
-                                placeholder="输入代码片段名称"
+                                placeholder={t.editPanel.namePlaceholder}
                                 onKeyDown={(e) => handleInputKeyDown(e, 'snippet-category')}
                                 autoFocus
                                 className={nameError ? 'has-error' : ''}
@@ -251,7 +255,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
                         </div>
                     </div>
                     <div className="jp-snippets-edit-field">
-                        <label>标签：</label>
+                        <label>{t.editPanel.tagsLabel}</label>
                         <MultiSelect
                             value={tags}
                             options={availableTags}
@@ -260,37 +264,39 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
                                 setTags([...tags, value]);
                                 setAvailableTags([...availableTags, value]);
                             }}
-                            placeholder="选择或输入标签"
+                            placeholder={t.editPanel.inputTagsPlaceholder}
                         />
                     </div>
                     <div className="jp-snippets-edit-field">
-                        <label>描述：</label>
+                        <label>{t.editPanel.descriptionLabel}</label>
                         <textarea 
                             id="snippet-description"
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="输入描述（可选）"
+                            placeholder={t.editPanel.descriptionPlaceholder}
                             rows={2}
                             onKeyDown={(e) => handleInputKeyDown(e, 'snippet-code')}
                         />
                     </div>
                     <div className="jp-snippets-edit-field">
-                        <label>代码：</label>
+                        <label>{t.editPanel.codeLabel}</label>
                         <textarea 
                             id="snippet-code"
                             value={code}
                             onChange={(e) => setCode(e.target.value)}
                             className="jp-snippets-code-editor"
                             rows={10}
-                            placeholder="输入代码"
+                            placeholder={t.editPanel.codePlaceholder}
                             spellCheck={false}
                             wrap="off"
                         />
                     </div>
                 </div>
                 <div className="jp-snippets-modal-footer">
-                    <button onClick={handleSave}>{snippet.id ? '更新' : '保存'}</button>
-                    <button onClick={onCancel}>取消</button>
+                    <button onClick={handleSave}>
+                        {snippet.id ? t.editPanel.update : t.buttons.save}
+                    </button>
+                    <button onClick={onCancel}>{t.buttons.cancel}</button>
                 </div>
             </div>
         </div>
@@ -298,7 +304,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
 };
 
 export class EditSnippetPanel extends ReactWidget {
-    private _isDisposed = false;  // 改用不同的名字
+    private _isDisposed = false;
     private _props: EditSnippetPanelProps;
 
     constructor(options: EditSnippetPanelProps) {
@@ -307,15 +313,16 @@ export class EditSnippetPanel extends ReactWidget {
         this._props = options;
         this.id = `snippet-editor-${options.snippet.id || 'new'}-${Date.now()}`;
         
-        this.title.label = options.snippet.id ? '编辑代码片段' : '新建代码片段';
+        const t = getTranslation();
+        this.title.label = options.snippet.id ? t.editPanel.title : t.editPanel.newTitle;
         this.title.closable = true;
     }
 
     dispose(): void {
-        if (this._isDisposed) {  // 使用新的变量名
+        if (this._isDisposed) {
             return;
         }
-        this._isDisposed = true;  // 使用新的变量名
+        this._isDisposed = true;
         
         super.dispose();
         this._props.onCancel();

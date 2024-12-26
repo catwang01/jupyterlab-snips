@@ -6,6 +6,7 @@ import { Snippet } from '../models/types';
 import { JupyterFrontEnd } from '@jupyterlab/application';
 import { EditSnippetPanel } from './EditSnippetPanel';
 import { Dialog, showDialog } from '@jupyterlab/apputils';
+import { getTranslation } from '../i18n';
 
 declare global {
     interface Window {
@@ -33,11 +34,12 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                 const data = await snippetService.current.getSnippets();
                 setSnippets(data);
             } catch (error) {
-                console.error('加载代码片段失败:', error);
+                const t = getTranslation();
+                console.error(t.dialog.loadSnippetsError, error);
             }
         }, []);
 
-        // 暴露 loadSnippets 方法给父组件
+        // Expose loadSnippets method to parent component
         React.useImperativeHandle(ref, () => ({
             loadSnippets
         }), [loadSnippets]);
@@ -47,47 +49,54 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         }, [loadSnippets]);
 
         const handleInsert = async (code: string) => {
+            const t = getTranslation();
             try {
-                // 获取当前活动的笔记本
                 const notebook = window.jupyterapp?.shell.currentWidget;
                 if (!notebook) {
-                    window.alert('请先打开一个笔记本');
+                    void showDialog({
+                        title: t.dialog.errorTitle,
+                        body: t.dialog.noNotebook,
+                        buttons: [Dialog.okButton({ label: t.buttons.confirm })]
+                    });
                     return;
                 }
 
-                // 获取当前活动的单元格
+                // Get current active cell
                 const activeCell = (notebook as any).content.activeCell;
                 
                 if (activeCell) {
-                    // 如果有活动单元格，直接插入代码
+                    // If there is an active cell, insert code directly
                     await window.jupyterapp?.commands.execute('notebook:replace-selection', {
                         text: code
                     });
                 } else {
-                    // 如果没有活动单元格，创建新的单元格并插入代码
+                    // If no active cell, create a new cell and insert code
                     await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
                     await window.jupyterapp?.commands.execute('notebook:replace-selection', {
                         text: code
                     });
                 }
 
-                // 聚焦到单元格
+                // Focus on the cell
                 await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
             } catch (error) {
-                console.error('插入代码片段失败:', error);
-                window.alert('插入代码片段失败，请重试');
+                void showDialog({
+                    title: t.dialog.errorTitle,
+                    body: t.dialog.insertError + error,
+                    buttons: [Dialog.okButton({ label: t.buttons.confirm })]
+                });
             }
         };
 
         const handleEdit = async (snippet: Snippet) => {
+            const t = getTranslation();
             const editPanel = new EditSnippetPanel({
                 snippet,
                 onSave: async (updatedSnippet) => {
                     try {
-                        // 更新代码片段
                         await snippetService.current.updateSnippet(snippet.id, updatedSnippet);
                         
-                        // 更新标签列表
+                        // Update tags list
                         const allSnippets = await snippetService.current.getSnippets();
                         const allTags: string[] = Array.from(new Set(
                             allSnippets.flatMap((s: Snippet) => s.tags || [])
@@ -97,7 +106,11 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                         loadSnippets();
                         editPanel.dispose();
                     } catch (error) {
-                        console.error('更新失败:', error);
+                        void showDialog({
+                            title: t.dialog.errorTitle,
+                            body: t.dialog.updateError + error,
+                            buttons: [Dialog.okButton({ label: t.buttons.confirm })]
+                        });
                     }
                 },
                 onCancel: () => {
@@ -109,12 +122,14 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         };
 
         const handleDelete = async (id: string) => {
+            const t = getTranslation();
+            
             const result = await showDialog({
-                title: '删除确认',
-                body: '确定要删除这个代码片段吗？',
+                title: t.dialog.deleteTitle,
+                body: t.dialog.deleteMessage,
                 buttons: [
-                    Dialog.cancelButton({ label: '取消' }),
-                    Dialog.warnButton({ label: '删除' })
+                    Dialog.cancelButton({ label: t.buttons.cancel }),
+                    Dialog.warnButton({ label: t.buttons.delete })
                 ]
             });
 
@@ -122,7 +137,7 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                 try {
                     await snippetService.current.deleteSnippet(id);
                     
-                    // 更新标签列表
+                    // Update tags list
                     const allSnippets = await snippetService.current.getSnippets();
                     const allTags: string[] = Array.from(new Set(
                         allSnippets.flatMap((s: Snippet) => s.tags || [])
@@ -132,15 +147,16 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                     loadSnippets();
                 } catch (error) {
                     void showDialog({
-                        title: '错误',
-                        body: '删除失败: ' + error,
-                        buttons: [Dialog.okButton({ label: '确定' })]
+                        title: t.dialog.errorTitle,
+                        body: t.dialog.deleteError + error,
+                        buttons: [Dialog.okButton({ label: t.buttons.confirm })]
                     });
                 }
             }
         };
 
         const handleNew = () => {
+            const t = getTranslation();
             const newSnippet: Snippet = {
                 id: crypto.randomUUID(),
                 name: '',
@@ -159,7 +175,11 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                         loadSnippets();
                         editPanel.dispose();
                     } catch (error) {
-                        console.error('保存失败:', error);
+                        void showDialog({
+                            title: t.dialog.errorTitle,
+                            body: t.dialog.saveError + error,
+                            buttons: [Dialog.okButton({ label: t.buttons.confirm })]
+                        });
                     }
                 },
                 onCancel: () => {
