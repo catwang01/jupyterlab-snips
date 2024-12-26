@@ -47,12 +47,35 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         }, [loadSnippets]);
 
         const handleInsert = async (code: string) => {
-            // 获取当前活动的笔记本和单元格
-            const notebook = await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
-            if (notebook) {
-                await window.jupyterapp?.commands.execute('notebook:replace-selection', {
-                    text: code
-                });
+            try {
+                // 获取当前活动的笔记本
+                const notebook = window.jupyterapp?.shell.currentWidget;
+                if (!notebook) {
+                    window.alert('请先打开一个笔记本');
+                    return;
+                }
+
+                // 获取当前活动的单元格
+                const activeCell = (notebook as any).content.activeCell;
+                
+                if (activeCell) {
+                    // 如果有活动单元格，直接插入代码
+                    await window.jupyterapp?.commands.execute('notebook:replace-selection', {
+                        text: code
+                    });
+                } else {
+                    // 如果没有活动单元格，创建新的单元格并插入代码
+                    await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
+                    await window.jupyterapp?.commands.execute('notebook:replace-selection', {
+                        text: code
+                    });
+                }
+
+                // 聚焦到单元格
+                await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
+            } catch (error) {
+                console.error('插入代码片段失败:', error);
+                window.alert('插入代码片段失败，请重试');
             }
         };
 

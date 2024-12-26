@@ -24,6 +24,9 @@ const plugin: JupyterFrontEndPlugin<void> = {
     ) => {
         console.log('JupyterLab extension jupyterlab-snips is activated!');
 
+        // 将应用实例添加到 window 对象
+        (window as any).jupyterapp = app;
+
         // 初始化 SnippetService
         const snippetService = new SnippetService();
         snippetService.initialize();
