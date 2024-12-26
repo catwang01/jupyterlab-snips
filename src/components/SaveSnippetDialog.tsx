@@ -3,13 +3,41 @@ import { Dialog, ReactWidget } from '@jupyterlab/apputils';
 
 interface SaveSnippetDialogProps {
     code: string;
-    onSave: (name: string, category: string, description: string) => void;
+    name?: string;
+    category?: string;
+    description?: string;
+    onNameChange?: (value: string) => void;
+    onCategoryChange?: (value: string) => void;
+    onDescriptionChange?: (value: string) => void;
 }
 
-const SaveSnippetDialog: React.FC<SaveSnippetDialogProps> = ({ code, onSave }) => {
-    const [name, setName] = useState('');
-    const [category, setCategory] = useState('');
-    const [description, setDescription] = useState('');
+const SaveSnippetDialog: React.FC<SaveSnippetDialogProps> = ({ 
+    code,
+    name = '',
+    category = '',
+    description = '',
+    onNameChange,
+    onCategoryChange,
+    onDescriptionChange
+}) => {
+    const [localName, setLocalName] = useState(name);
+    const [localCategory, setLocalCategory] = useState(category);
+    const [localDescription, setLocalDescription] = useState(description);
+
+    const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLocalName(e.target.value);
+        onNameChange?.(e.target.value);
+    };
+
+    const handleCategoryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLocalCategory(e.target.value);
+        onCategoryChange?.(e.target.value);
+    };
+
+    const handleDescriptionChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+        setLocalDescription(e.target.value);
+        onDescriptionChange?.(e.target.value);
+    };
 
     return (
         <div className="jp-snippets-dialog">
@@ -17,8 +45,8 @@ const SaveSnippetDialog: React.FC<SaveSnippetDialogProps> = ({ code, onSave }) =
                 <label>名称：</label>
                 <input 
                     type="text"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={localName}
+                    onChange={handleNameChange}
                     placeholder="输入代码片段名称"
                 />
             </div>
@@ -26,16 +54,16 @@ const SaveSnippetDialog: React.FC<SaveSnippetDialogProps> = ({ code, onSave }) =
                 <label>分类：</label>
                 <input 
                     type="text"
-                    value={category}
-                    onChange={(e) => setCategory(e.target.value)}
+                    value={localCategory}
+                    onChange={handleCategoryChange}
                     placeholder="输入分类（可选）"
                 />
             </div>
             <div className="jp-snippets-dialog-field">
                 <label>描述：</label>
                 <textarea 
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    value={localDescription}
+                    onChange={handleDescriptionChange}
                     placeholder="输入描述（可选）"
                 />
             </div>
@@ -48,16 +76,37 @@ const SaveSnippetDialog: React.FC<SaveSnippetDialogProps> = ({ code, onSave }) =
 };
 
 class DialogWidget extends ReactWidget {
+    private _props: SaveSnippetDialogProps;
+    private _name: string = '';
+    private _category: string = '';
+    private _description: string = '';
+
     constructor(props: SaveSnippetDialogProps) {
         super();
         this._props = props;
     }
 
-    render(): JSX.Element {
-        return <SaveSnippetDialog {...this._props} />;
+    getValue(): { name: string; category: string; description: string } {
+        return {
+            name: this._name,
+            category: this._category,
+            description: this._description
+        };
     }
 
-    private _props: SaveSnippetDialogProps;
+    render(): JSX.Element {
+        return (
+            <SaveSnippetDialog 
+                {...this._props}
+                name={this._name}
+                category={this._category}
+                description={this._description}
+                onNameChange={(value) => this._name = value}
+                onCategoryChange={(value) => this._category = value}
+                onDescriptionChange={(value) => this._description = value}
+            />
+        );
+    }
 }
 
 export async function showSaveSnippetDialog(code: string): Promise<{
@@ -65,12 +114,11 @@ export async function showSaveSnippetDialog(code: string): Promise<{
     category: string;
     description: string;
 } | null> {
+    const dialogWidget = new DialogWidget({ code });
+    
     const dialog = new Dialog({
         title: '保存代码片段',
-        body: new DialogWidget({ 
-            code, 
-            onSave: () => {} 
-        }),
+        body: dialogWidget,
         buttons: [
             Dialog.cancelButton(),
             Dialog.okButton({ label: '保存' })
@@ -78,27 +126,10 @@ export async function showSaveSnippetDialog(code: string): Promise<{
     });
 
     const result = await dialog.launch();
+
     if (!result.button.accept) {
         return null;
     }
 
-    const body = dialog.node.querySelector('.jp-snippets-dialog');
-    if (!body) {
-        return null;
-    }
-
-    const nameInput = body.querySelector('input[placeholder="输入代码片段名称"]') as HTMLInputElement;
-    const categoryInput = body.querySelector('input[placeholder="输入分类（可选）"]') as HTMLInputElement;
-    const descriptionInput = body.querySelector('textarea') as HTMLTextAreaElement;
-
-    if (!nameInput || !categoryInput || !descriptionInput) {
-        console.error('无法获取对话框输入值');
-        return null;
-    }
-
-    return {
-        name: nameInput.value,
-        category: categoryInput.value,
-        description: descriptionInput.value
-    };
+    return dialogWidget.getValue();
 } 

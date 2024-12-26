@@ -3,9 +3,11 @@ import { Snippet } from '../models/types';
 
 export class SnippetService {
     private readonly baseUrl: string;
+    private readonly serverSettings: ServerConnection.ISettings;
 
     constructor() {
-        this.baseUrl = `${ServerConnection.makeSettings().baseUrl}jupyterlab-snips/snippets`;
+        this.serverSettings = ServerConnection.makeSettings();
+        this.baseUrl = `${this.serverSettings.baseUrl}jupyterlab-snips/snippets`;
     }
 
     async saveSnippet(snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>): Promise<Snippet> {
@@ -16,13 +18,17 @@ export class SnippetService {
             updatedAt: Date.now()
         };
 
-        const response = await fetch(this.baseUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+        const response = await ServerConnection.makeRequest(
+            this.baseUrl,
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newSnippet)
             },
-            body: JSON.stringify(newSnippet)
-        });
+            this.serverSettings
+        );
 
         if (!response.ok) {
             throw new Error('保存代码片段失败');
@@ -32,10 +38,16 @@ export class SnippetService {
     }
 
     async getSnippets(): Promise<Snippet[]> {
-        const response = await fetch(this.baseUrl);
+        const response = await ServerConnection.makeRequest(
+            this.baseUrl,
+            {},
+            this.serverSettings
+        );
+
         if (!response.ok) {
             throw new Error('获取代码片段失败');
         }
+
         return response.json();
     }
 

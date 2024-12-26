@@ -28,7 +28,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const snippetService = new SnippetService();
         snippetService.initialize();
 
-        // 创建代码片段���板
+        // 创建代码片段板
         const snippetPanel = new SnippetPanel();
         snippetPanel.id = 'jupyterlab-snips';
         snippetPanel.title.icon = codeIcon;
@@ -84,6 +84,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
                     const result = await showSaveSnippetDialog(code);
                     
                     if (result) {
+                        // 调用后端 API 保存代码片段
                         await snippetService.saveSnippet({
                             name: result.name,
                             code,
