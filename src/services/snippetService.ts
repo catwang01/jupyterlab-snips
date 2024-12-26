@@ -19,7 +19,7 @@ export class SnippetService {
         };
 
         const response = await ServerConnection.makeRequest(
-            `${this.baseUrl}/snippets`,
+            `${this.baseUrl}/snippets/${newSnippet.id}`,
             {
                 method: 'POST',
                 headers: {
@@ -68,7 +68,7 @@ export class SnippetService {
         );
 
         if (!response.ok) {
-            throw new Error('更新代码片段失败');
+            throw new Error('��新代码片段失败');
         }
 
         return response.json();

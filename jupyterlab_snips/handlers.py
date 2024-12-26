@@ -27,9 +27,15 @@ class SnippetHandler(APIHandler):
             self.finish(json.dumps(snippets))
 
     @tornado.web.authenticated
-    def post(self, _=None):
-        # 保存新的代码片段
+    def post(self, snippet_id):
+        # 保存新的代码片段，需要提供 ID
+        if not snippet_id:
+            raise tornado.web.HTTPError(400, "Snippet ID is required")
+        
         data = self.get_json_body()
+        if data.get('id') != snippet_id:
+            raise tornado.web.HTTPError(400, "Snippet ID mismatch")
+        
         snippets = self._load_snippets()
         snippets.append(data)
         self._save_snippets(snippets)
@@ -146,12 +152,12 @@ def setup_handlers(web_app):
 
     handlers = [
         # 先处理 tags 相关的路由
-        (url_path_join(base_url, "jupyterlab-snips", "tags"), TagsHandler),  # 无参数的 tags 路由
-        (url_path_join(base_url, "jupyterlab-snips", "tags", "([^/]+)"), TagsHandler),  # 带参数的 tags 路由
+        (url_path_join(base_url, "jupyterlab-snips", "tags"), TagsHandler),  # GET /tags
+        (url_path_join(base_url, "jupyterlab-snips", "tags", "([^/]+)"), TagsHandler),  # GET /tags/{id}
         
         # 然后是 snippets 相关的路由
-        (url_path_join(base_url, "jupyterlab-snips", "snippets", "([^/]+)"), SnippetHandler),  # 带参数的 snippets 路由
-        (url_path_join(base_url, "jupyterlab-snips", "snippets"), SnippetHandler),  # 无参数的 snippets 路由
+        (url_path_join(base_url, "jupyterlab-snips", "snippets"), SnippetHandler),  # GET /snippets
+        (url_path_join(base_url, "jupyterlab-snips", "snippets", "([^/]+)"), SnippetHandler),  # POST, PUT, DELETE /snippets/{id}
     ]
 
     web_app.add_handlers(host_pattern, handlers) 
