@@ -28,7 +28,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
         const snippetService = new SnippetService();
         snippetService.initialize();
 
-        // 创建代码片段面板
+        // 创建代码片段���板
         const snippetPanel = new SnippetPanel();
         snippetPanel.id = 'jupyterlab-snips';
         snippetPanel.title.icon = codeIcon;
@@ -90,6 +90,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
                             category: result.category,
                             description: result.description
                         });
+                        // 保存成功后刷新面板
+                        snippetPanel.refresh();
                     }
                 } catch (error) {
                     console.error('保存代码片段失败:', error);

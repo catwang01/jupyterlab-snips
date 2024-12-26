@@ -7,7 +7,7 @@ from pathlib import Path
 import setuptools
 
 HERE = Path(__file__).parent.resolve()
-name = "jupyterlab-snips"
+name = "jupyterlab_snips"
 
 # Get version
 with (HERE / "package.json").open() as f:
@@ -16,7 +16,7 @@ with (HERE / "package.json").open() as f:
 setup_args = dict(
     name=name,
     version=version,
-    url="https://github.com/your-name/jupyterlab-snips",
+    url="https://github.com/your-name/jupyterlab_snips",
     author="Your Name",
     description="A JupyterLab extension for managing code snippets",
     long_description=Path("README.md").read_text() if Path("README.md").exists() else "",
@@ -24,6 +24,7 @@ setup_args = dict(
     packages=setuptools.find_packages(),
     install_requires=[
         "jupyterlab>=4.0.0,<5.0.0",
+        "jupyter_server>=2.0.0",
     ],
     zip_safe=False,
     include_package_data=True,

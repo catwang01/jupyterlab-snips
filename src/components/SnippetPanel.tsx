@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ReactWidget } from '@jupyterlab/apputils';
 import { SnippetList } from './SnippetList';
 import { SnippetService } from '../services/snippetService';
@@ -9,15 +9,15 @@ const SnippetPanelComponent: React.FC = () => {
     const [searchText, setSearchText] = useState('');
     const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-    useEffect(() => {
-        loadSnippets();
-    }, []);
-
-    const loadSnippets = async () => {
+    const loadSnippets = useCallback(async () => {
         const service = new SnippetService();
         const data = await service.getSnippets();
         setSnippets(data);
-    };
+    }, []);
+
+    useEffect(() => {
+        loadSnippets();
+    }, [loadSnippets]);
 
     return (
         <div className="jp-snippets-panel">
@@ -45,6 +45,10 @@ export class SnippetPanel extends ReactWidget {
     constructor() {
         super();
         this.addClass('jp-snippets-panel-widget');
+    }
+
+    refresh(): void {
+        this.update();
     }
 
     render(): JSX.Element {
