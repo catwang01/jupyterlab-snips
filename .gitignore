@@ -1,0 +1,69 @@
+# Python
+*.py[cod]
+__pycache__/
+*.so
+.Python
+.ipynb_checkpoints
+**/`.ipynb_checkpoints
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Node
+node_modules/
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+.npm
+.yarn-integrity
+.yarn/
+.yarnrc
+
+# TypeScript
+*.tsbuildinfo
+lib/
+tsconfig.tsbuildinfo
+
+# JupyterLab
+jupyterlab_snippets/labextension/
+jupyterlab_snippets/labextension/package.json
+jupyterlab_snippets/labextension/static/
+jupyterlab_snippets/labextension/build_log.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Coverage
+coverage/
+.coverage
+htmlcov/
+
+# Misc
+*.log
+.cache/
+.pytest_cache/
+.mypy_cache/
+*.pyc
+.jupyter/
+.ipython/ 

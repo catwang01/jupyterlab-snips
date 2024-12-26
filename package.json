@@ -1,0 +1,66 @@
+{
+  "name": "jupyterlab-snippets",
+  "version": "0.1.0",
+  "description": "JupyterLab 代码片段管理插件",
+  "keywords": [
+    "jupyter",
+    "jupyterlab",
+    "jupyterlab-extension"
+  ],
+  "homepage": "https://github.com/your-name/jupyterlab-snippets",
+  "bugs": {
+    "url": "https://github.com/your-name/jupyterlab-snippets/issues"
+  },
+  "license": "BSD-3-Clause",
+  "author": {
+    "name": "Your Name",
+    "email": "your.email@example.com"
+  },
+  "files": [
+    "lib/**/*.{d.ts,eot,gif,html,jpg,js,js.map,json,png,svg,woff2,ttf}",
+    "style/**/*.{css,js,eot,gif,html,jpg,json,png,svg,woff2,ttf}"
+  ],
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "style": "style/index.css",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-name/jupyterlab-snippets.git"
+  },
+  "scripts": {
+    "build": "jlpm clean && jlpm build:lib && jlpm build:labextension",
+    "build:labextension": "jupyter labextension build .",
+    "build:lib": "tsc",
+    "clean": "jlpm clean:lib && jlpm clean:labextension",
+    "clean:lib": "rimraf lib tsconfig.tsbuildinfo",
+    "clean:labextension": "rimraf jupyterlab_snippets/labextension",
+    "watch": "run-p watch:src watch:labextension",
+    "watch:src": "tsc -w",
+    "watch:labextension": "jupyter labextension watch ."
+  },
+  "dependencies": {
+    "@jupyterlab/application": "^4.3.4",
+    "@jupyterlab/apputils": "^4.3.4",
+    "@jupyterlab/mainmenu": "~4.3.4",
+    "@jupyterlab/notebook": "^4.3.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@jupyterlab/builder": "^4.3.4",
+    "@types/node": "^18.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "npm-run-all": "^4.1.5",
+    "rimraf": "^5.0.0",
+    "typescript": "~5.0.0"
+  },
+  "sideEffects": [
+    "style/*.css",
+    "style/index.js"
+  ],
+  "jupyterlab": {
+    "extension": true,
+    "outputDir": "jupyterlab_snippets/labextension"
+  }
+}

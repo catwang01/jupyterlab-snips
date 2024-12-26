@@ -1,0 +1,18 @@
+jupyterlab-snippets/
+├── package.json
+├── tsconfig.json
+├── src/
+│   ├── index.ts                 # 插件入口
+│   ├── components/              # React 组件
+│   │   ├── SnippetPanel.tsx    # 主面板
+│   │   ├── SnippetList.tsx     # 片段列表
+│   │   └── SnippetForm.tsx     # 保存/编辑表单
+│   ├── services/               # 业务逻辑
+│   │   ├── snippetService.ts   # 片段管理服务
+│   │   └── storageService.ts   # 存储服务
+│   ├── models/                 # 数据模型
+│   │   └── types.ts           # 类型定义
+│   └── utils/                 # 工具函数
+│       └── constants.ts       # 常量定义
+└── style/
+    └── index.css             # 样式文件 
