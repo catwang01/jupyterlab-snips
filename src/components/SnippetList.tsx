@@ -6,13 +6,15 @@ interface SnippetListProps {
     searchText: string;
     selectedCategory: string | null;
     onCategoryChange: (category: string | null) => void;
+    onRefresh: () => void;
 }
 
 export const SnippetList: React.FC<SnippetListProps> = ({
     snippets,
     searchText,
     selectedCategory,
-    onCategoryChange
+    onCategoryChange,
+    onRefresh
 }) => {
     const categories = Array.from(
         new Set(
@@ -37,22 +39,31 @@ export const SnippetList: React.FC<SnippetListProps> = ({
 
     return (
         <div className="jp-snippets-container">
-            <div className="jp-snippets-categories">
-                <button 
-                    onClick={() => onCategoryChange(null)}
-                    className={selectedCategory === null ? 'active' : ''}
-                >
-                    全部
-                </button>
-                {categories.map(category => (
-                    <button
-                        key={category}
-                        onClick={() => onCategoryChange(category)}
-                        className={selectedCategory === category ? 'active' : ''}
+            <div className="jp-snippets-header">
+                <div className="jp-snippets-categories">
+                    <button 
+                        onClick={() => onCategoryChange(null)}
+                        className={selectedCategory === null ? 'active' : ''}
                     >
-                        {category}
+                        全部
                     </button>
-                ))}
+                    {categories.map(category => (
+                        <button
+                            key={category}
+                            onClick={() => onCategoryChange(category)}
+                            className={selectedCategory === category ? 'active' : ''}
+                        >
+                            {category}
+                        </button>
+                    ))}
+                </div>
+                <button 
+                    className="jp-snippets-refresh"
+                    onClick={onRefresh}
+                    title="刷新列表"
+                >
+                    刷新
+                </button>
             </div>
             
             <div className="jp-snippets-list">

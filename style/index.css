@@ -141,4 +141,23 @@
     flex: 1;
     overflow: auto;
     padding: 8px;
+}
+
+.jp-snippets-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.jp-snippets-refresh {
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+    background: var(--jp-layout-color1);
+    cursor: pointer;
+}
+
+.jp-snippets-refresh:hover {
+    background: var(--jp-layout-color2);
 } 
