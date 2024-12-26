@@ -114,13 +114,14 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
         >
             <div className="jp-snippets-item-header">
                 <h3>{snippet.name}</h3>
-                <div className="jp-snippets-tags">
+                { tags.length > 0 && <div className="jp-snippets-tags">
                     {tags.map(tag => (
                         <span key={tag} className="jp-snippets-tag">
                             {tag}
                         </span>
                     ))}
                 </div>
+                }
             </div>
             {snippet.description && <p>{snippet.description}</p>}
             <div className="jp-snippets-item-actions">
