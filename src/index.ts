@@ -95,26 +95,21 @@ const plugin: JupyterFrontEndPlugin<void> = {
                     }
 
                     const code = cell.model.sharedModel.source;
-                    
-                    // 创建新的代码片段
-                    const newSnippet: Snippet = {
-                        id: crypto.randomUUID(),
-                        name: '',
-                        code,
-                        tags: [],
-                        description: '',
-                        createdAt: Date.now(),
-                        updatedAt: Date.now()
-                    };
-
                     const t = getTranslation();
+                    
                     const editPanel = new EditSnippetPanel({
                         snippet: {
-                            ...newSnippet,
-                            id: ''
-                        },
+                            name: '',
+                            code,
+                            tags: [],
+                            description: '',
+                            id: '',  // 空 id 表示新建
+                            createdAt: Date.now(),
+                            updatedAt: Date.now()
+                        } as Snippet,
                         title: t.editPanel.newTitle,
                         onSave: async (snippet) => {
+                            // 直接保存，不需要保存返回值
                             await snippetService.saveSnippet(snippet);
                             snippetPanel.refresh();
                             editPanel.dispose();

@@ -10,22 +10,15 @@ export class SnippetService {
         this.baseUrl = `${this.serverSettings.baseUrl}jupyterlab-snips`;
     }
 
-    async saveSnippet(snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>): Promise<Snippet> {
-        const newSnippet: Snippet = {
-            id: crypto.randomUUID(),
-            ...snippet,
-            createdAt: Date.now(),
-            updatedAt: Date.now()
-        };
-
+    async saveSnippet(snippet: Partial<Snippet>): Promise<Snippet> {
         const response = await ServerConnection.makeRequest(
-            `${this.baseUrl}/snippets/${newSnippet.id}`,
+            `${this.baseUrl}/snippets`,
             {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(newSnippet)
+                body: JSON.stringify(snippet)
             },
             this.serverSettings
         );
@@ -34,7 +27,7 @@ export class SnippetService {
             throw new Error('保存代码片段失败');
         }
 
-        return newSnippet;
+        return response.json();
     }
 
     async getSnippets(): Promise<Snippet[]> {

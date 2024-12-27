@@ -2015,7 +2015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/application@npm:^4.3.4":
+"@jupyterlab/application@npm:^4.0.0, @jupyterlab/application@npm:^4.3.4":
   version: 4.3.4
   resolution: "@jupyterlab/application@npm:4.3.4"
   dependencies:
@@ -2229,7 +2229,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/completer@npm:^4.3.4":
+"@jupyterlab/completer@npm:^4.0.0":
   version: 4.3.4
   resolution: "@jupyterlab/completer@npm:4.3.4"
   dependencies:
@@ -2392,7 +2392,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jupyterlab/mainmenu@npm:~4.3.4":
+"@jupyterlab/mainmenu@npm:^4.0.0":
   version: 4.3.4
   resolution: "@jupyterlab/mainmenu@npm:4.3.4"
   dependencies:
@@ -6734,13 +6734,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "jupyterlab-snips@workspace:."
   dependencies:
-    "@jupyterlab/application": ^4.3.4
+    "@jupyterlab/application": ^4.0.0
     "@jupyterlab/apputils": ^4.3.4
     "@jupyterlab/builder": ^4.0.0
     "@jupyterlab/codemirror": ^4.0.0
-    "@jupyterlab/completer": ^4.3.4
+    "@jupyterlab/completer": ^4.0.0
     "@jupyterlab/coreutils": ^6.0.0
-    "@jupyterlab/mainmenu": ~4.3.4
+    "@jupyterlab/mainmenu": ^4.0.0
     "@jupyterlab/notebook": ^4.3.4
     "@jupyterlab/services": ^7.0.0
     "@jupyterlab/settingregistry": ^4.0.0

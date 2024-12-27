@@ -4,6 +4,8 @@ from pathlib import Path
 from jupyter_server.base.handlers import APIHandler
 from jupyter_server.utils import url_path_join
 import tornado
+import uuid
+import time
 
 class SnippetHandler(APIHandler):
     def initialize(self):
@@ -27,19 +29,21 @@ class SnippetHandler(APIHandler):
             self.finish(json.dumps(snippets))
 
     @tornado.web.authenticated
-    def post(self, snippet_id):
-        # 保存新的代码片段，需要提供 ID
-        if not snippet_id:
-            raise tornado.web.HTTPError(400, "Snippet ID is required")
-        
+    def post(self, snippet_id=None):
         data = self.get_json_body()
-        if data.get('id') != snippet_id:
-            raise tornado.web.HTTPError(400, "Snippet ID mismatch")
+        
+        # 如果没有 id，生成一个新的
+        if not data.get('id'):
+            data['id'] = str(uuid.uuid4())
+            data['createdAt'] = data.get('createdAt', int(time.time() * 1000))
+            data['updatedAt'] = data.get('updatedAt', int(time.time() * 1000))
         
         snippets = self._load_snippets()
         snippets.append(data)
         self._save_snippets(snippets)
-        self.finish(json.dumps({"status": "success"}))
+        
+        # 返回完整的片段数据（包含新生成的 id）
+        self.finish(json.dumps(data))
 
     @tornado.web.authenticated
     def put(self, snippet_id=None):

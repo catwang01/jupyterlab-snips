@@ -295,7 +295,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
                 </div>
                 <div className="jp-snippets-modal-footer">
                     <button onClick={handleSave}>
-                        {snippet.id ? t.editPanel.updateButton : t.editPanel.saveButton}
+                        { snippet.id && snippet.id !== ''? t.editPanel.updateButton : t.editPanel.saveButton}
                     </button>
                     <button onClick={onCancel}>{t.buttons.cancel}</button>
                 </div>

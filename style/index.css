@@ -1,1 +1,765 @@
-@import url('base.css');
+.jp-snippets-panel {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 8px;
+}
+
+.jp-snippets-search {
+    margin-bottom: 12px;
+}
+
+.jp-snippets-search input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+}
+
+.jp-snippets-container {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.jp-snippets-categories {
+    margin-bottom: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.jp-snippets-categories button {
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+    background: var(--jp-layout-color1);
+    cursor: pointer;
+}
+
+.jp-snippets-categories button.active {
+    background: var(--jp-brand-color1);
+    color: white;
+}
+
+.jp-snippets-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin-top: 8px;
+    background: var(--jp-layout-color0);
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.jp-snippets-item {
+    margin-bottom: 8px;
+    padding: 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    background: var(--jp-layout-color1);
+    height: 77px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-sizing: border-box;
+    --tooltip-delay: 0.5s;
+}
+
+.jp-snippets-item:last-child {
+    margin-bottom: 0;
+}
+
+.jp-snippets-item::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 0;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 8px;
+    border-radius: 4px;
+    background: var(--jp-layout-color0);
+    border: 1px solid var(--jp-border-color1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    color: var(--jp-content-font-color1);
+    font-family: var(--jp-code-font-family);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-all;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    pointer-events: none;
+    z-index: 10000;
+}
+
+@media (min-width: 768px) {
+    .jp-snippets-item:has(+ .jp-snippets-item:nth-last-child(-n+3))::before {
+        left: auto;
+        right: calc(100% + 8px);
+    }
+}
+
+.jp-snippets-item h3 {
+    margin: 0 0 2px 0;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.jp-snippets-item p {
+    margin: 0 0 4px 0;
+    font-size: 11px;
+    color: var(--jp-content-font-color2);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 16px;
+}
+
+.jp-snippets-item-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    height: 24px;
+}
+
+/* 通用按钮基础样式 */
+.jp-snippets-button {
+    padding: 4px 12px;
+    font-size: 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: var(--jp-brand-color1);
+    color: white;
+}
+
+.jp-snippets-button:hover {
+    opacity: 0.8;
+}
+
+.jp-snippets-button:active {
+    transform: scale(0.98);
+}
+
+/* 修改现有按钮使用通用样式 */
+.jp-snippets-item-actions button {
+    composes: jp-snippets-button;
+}
+
+.jp-snippets-new {
+    composes: jp-snippets-button;
+}
+
+.jp-snippets-refresh {
+    composes: jp-snippets-button;
+}
+
+.jp-snippets-dialog {
+    padding: 10px;
+}
+
+.jp-snippets-dialog-field {
+    margin-bottom: 10px;
+}
+
+.jp-snippets-dialog-field label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.jp-snippets-dialog-field input,
+.jp-snippets-dialog-field textarea {
+    width: 100%;
+    padding: 5px;
+}
+
+.jp-snippets-dialog-preview {
+    margin-top: 15px;
+}
+
+.jp-snippets-dialog-preview pre {
+    background: var(--jp-cell-editor-background);
+    padding: 10px;
+    border-radius: 4px;
+    max-height: 200px;
+    overflow: auto;
+}
+
+.jp-snippets-panel-widget {
+    min-width: 300px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--jp-layout-color1);
+    color: var(--jp-ui-font-color1);
+}
+
+.jp-snippets-search input {
+    width: 100%;
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+    background: var(--jp-input-active-background);
+    color: var(--jp-ui-font-color0);
+}
+
+.jp-snippets-content {
+    flex: 1;
+    overflow: auto;
+    padding: 8px;
+}
+
+.jp-snippets-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.jp-snippets-refresh {
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+    background: var(--jp-layout-color1);
+    cursor: pointer;
+}
+
+.jp-snippets-refresh:hover {
+    background: var(--jp-layout-color2);
+}
+
+.jp-code-preview {
+    display: none;
+}
+
+.jp-snippets-code-editor {
+    font-family: var(--jp-code-font-family);
+    font-size: var(--jp-code-font-size);
+    line-height: var(--jp-code-line-height);
+    background: var(--jp-cell-editor-background);
+    color: var(--jp-content-font-color1);
+    padding: 8px;
+    width: 100%;
+    min-height: 200px;
+    resize: none;
+    white-space: pre;
+    tab-size: 4;
+    border: 10px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.3s ease-in-out;
+}
+
+.jp-snippets-code-editor:focus {
+    outline: none;
+    border-color: rgba(30, 136, 229, 0.3);
+    box-shadow: 
+        0 0 0 10px rgba(30, 136, 229, 0.1),
+        0 0 0 5px rgba(30, 136, 229, 0.2);
+}
+
+.jp-snippets-edit-panel {
+    padding: 16px;
+}
+
+.jp-snippets-edit-field {
+    margin-bottom: 16px;
+}
+
+.jp-snippets-edit-field label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.jp-snippets-edit-field input,
+.jp-snippets-edit-field textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    background: var(--jp-input-background);
+    color: var(--jp-content-font-color1);
+}
+
+.jp-snippets-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.jp-snippets-edit-actions button {
+    padding: 6px 12px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    background: var(--jp-layout-color1);
+    cursor: pointer;
+}
+
+.jp-snippets-edit-actions button:hover {
+    background: var(--jp-layout-color2);
+}
+
+.jp-snippets-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.jp-snippets-modal-content {
+    background: var(--jp-layout-color1);
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    width: 600px;
+    max-width: 90vw;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.jp-snippets-modal-header {
+    padding: 16px;
+    border-bottom: 1px solid var(--jp-border-color1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.jp-snippets-modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    color: var(--jp-ui-font-color0);
+}
+
+.jp-snippets-modal-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--jp-ui-font-color2);
+}
+
+.jp-snippets-modal-body {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.jp-snippets-modal-footer {
+    padding: 16px;
+    border-top: 1px solid var(--jp-border-color1);
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.jp-snippets-modal-footer button {
+    padding: 6px 12px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    background: var(--jp-layout-color1);
+    cursor: pointer;
+}
+
+.jp-snippets-modal-footer button:hover {
+    background: var(--jp-layout-color2);
+}
+
+.jp-snippets-modal-widget {
+    min-width: 600px;
+    min-height: 400px;
+    background: var(--jp-layout-color1);
+    display: flex;
+    flex-direction: column;
+}
+
+.jp-snippets-editor-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+}
+
+.jp-snippets-modal-backdrop {
+    position: relative;
+    flex: 1;
+    display: flex;
+    background: none;
+}
+
+.jp-snippets-modal-content {
+    flex: 1;
+    margin: 0;
+    max-width: none;
+    max-height: none;
+    box-shadow: none;
+    border-radius: 0;
+}
+
+.jp-snippets-modal-body {
+    padding: 16px;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.jp-snippets-edit-field {
+    margin-bottom: 16px;
+    display: flex;
+    flex-direction: column;
+}
+
+.jp-snippets-edit-field:last-child {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.jp-snippets-edit-field textarea.jp-snippets-code-editor {
+    flex: 1;
+    min-height: 0;
+    resize: none;
+}
+
+.jp-snippets-edit-field input:focus,
+.jp-snippets-edit-field textarea:not(.jp-snippets-code-editor):focus {
+    outline: none;
+    border-color: var(--jp-border-color1);
+    box-shadow: 0 0 0 1px var(--jp-border-color1);
+}
+
+.jp-snippets-input-wrapper {
+    position: relative;
+}
+
+.jp-snippets-input-error {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    color: var(--jp-error-color1);
+    font-size: 12px;
+}
+
+.jp-snippets-edit-field input.has-error {
+    border-color: var(--jp-error-color1);
+}
+
+.jp-snippets-edit-field input.has-error:focus {
+    border-color: var(--jp-error-color1);
+    box-shadow: 0 0 0 1px var(--jp-error-color1);
+}
+
+/* 调整字段间距以容纳错误信息 */
+.jp-snippets-edit-field {
+    margin-bottom: 24px;  /* 增加间距 */
+}
+
+/* 美化滚动条 */
+.jp-snippets-list::-webkit-scrollbar,
+.jp-code-preview::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.jp-snippets-list::-webkit-scrollbar-track,
+.jp-code-preview::-webkit-scrollbar-track {
+    background: var(--jp-layout-color0);
+}
+
+.jp-snippets-list::-webkit-scrollbar-thumb,
+.jp-code-preview::-webkit-scrollbar-thumb {
+    background: var(--jp-border-color2);
+    border-radius: 4px;
+}
+
+.jp-snippets-list::-webkit-scrollbar-thumb:hover,
+.jp-code-preview::-webkit-scrollbar-thumb:hover {
+    background: var(--jp-border-color3);
+}
+
+/* 美化 title 提示 */
+.jp-snippets-item {
+    /* ... 其他样式保持不变 ... */
+}
+
+/* 美化原生 title */
+::selection {
+    background: var(--jp-brand-color1);
+    color: white;
+}
+
+/* 全局美化 title 样式 */
+[title] {
+    position: relative;
+}
+
+[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    left: calc(100% + 8px);
+    top: 0;
+    min-width: 300px;
+    max-width: 400px;
+    padding: 8px;
+    border-radius: 4px;
+    background: var(--jp-layout-color0);
+    border: 1px solid var(--jp-border-color1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    color: var(--jp-content-font-color1);
+    font-family: var(--jp-code-font-family);
+    font-size: 11px;
+    line-height: 1.4;
+    white-space: pre-wrap;
+    word-break: break-all;
+    z-index: 10000;
+}
+
+/* 当靠近右边时显示在左侧 */
+@media (min-width: 768px) {
+    .jp-snippets-item:has(+ .jp-snippets-item:nth-last-child(-n+3))[title]:hover::after {
+        left: auto;
+        right: calc(100% + 8px);
+    }
+}
+
+.jp-snippets-list::-webkit-scrollbar {
+    width: 8px;
+    height: 0;
+}
+
+/* 分类复选框样式 */
+.jp-snippets-category-checkbox {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 3px;
+    background: var(--jp-layout-color1);
+    cursor: pointer;
+    font-size: 12px;
+    user-select: none;
+}
+
+.jp-snippets-category-checkbox input {
+    margin-right: 4px;
+}
+
+.jp-snippets-category-checkbox.active {
+    background: var(--jp-brand-color1);
+    color: white;
+    border-color: var(--jp-brand-color1);
+}
+
+/* 标签样式 */
+.jp-snippets-item-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+}
+
+.jp-snippets-tag {
+    padding: 2px 6px;
+    background: var(--jp-layout-color2);
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--jp-content-font-color2);
+    white-space: nowrap;
+}
+
+/* 调整标题样式以适应新布局 */
+.jp-snippets-item h3 {
+    margin: 0;
+    font-size: 12px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+}
+
+/* 分类选择器样式 */
+.jp-snippets-category-select {
+    width: 100%;
+    min-height: 32px;
+    background: var(--jp-input-background);
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    color: var(--jp-content-font-color1);
+}
+
+.jp-snippets-category-select .jp-select-placeholder {
+    color: var(--jp-ui-font-color2);
+}
+
+.jp-snippets-category-select .jp-select-value {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 2px;
+}
+
+.jp-snippets-category-select .jp-select-value-item {
+    background: var(--jp-layout-color2);
+    border-radius: 3px;
+    padding: 2px 6px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.jp-snippets-category-select .jp-select-value-item-remove {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.jp-snippets-category-select .jp-select-value-item-remove:hover {
+    opacity: 1;
+}
+
+/* MultiSelect 组件样式 */
+.jp-snippets-multi-select {
+    position: relative;
+    width: 100%;
+    height: 28px;
+}
+
+.jp-snippets-multi-select > div {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 4px 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    background: var(--jp-input-background);
+    align-items: center;
+}
+
+.jp-snippets-multi-select > div:focus-within {
+    border-color: var(--jp-brand-color1);
+    box-shadow: inset 0 0 0 1px var(--jp-brand-color1);
+}
+
+.jp-snippets-multi-select input {
+    border: none !important;
+    outline: none !important;
+    padding: 0 !important;
+    background: transparent !important;
+    flex: 1;
+    min-width: 60px;
+    height: 100%;
+    font-size: 12px;
+    color: var(--jp-ui-font-color0);
+    box-shadow: none !important;
+}
+
+.jp-snippets-options {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 4px;
+    background: var(--jp-layout-color1);
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.jp-snippets-option {
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 12px;
+    line-height: 16px;
+    color: var(--jp-ui-font-color1);
+    transition: all 0.15s ease;
+}
+
+.jp-snippets-option:hover {
+    background: var(--jp-layout-color2);
+}
+
+/* 调整搜索框和标签选择器的布局 */
+.jp-snippets-filter {
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    width: 60%;
+    background: var(--jp-layout-color1);
+}
+
+.jp-snippets-search {
+    width: 100%;
+}
+
+/* 统一输入框样式 */
+.jp-snippets-search input,
+.jp-snippets-multi-select {
+    width: 100%;
+    height: 28px;
+}
+
+.jp-snippets-search input {
+    padding: 0 8px;
+    border: 1px solid var(--jp-border-color1);
+    border-radius: 4px;
+    background: var(--jp-input-background);
+    font-size: 12px;
+    color: var(--jp-ui-font-color0);
+}
+
+.jp-snippets-search input:focus {
+    border-color: var(--jp-brand-color1);
+    box-shadow: inset 0 0 0 1px var(--jp-brand-color1);
+}
+
+/* 操作按钮容器 */
+.jp-snippets-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* 新建按钮样式 */
+.jp-snippets-new {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: var(--jp-brand-color1);
+    border: none;
+    color: white;
+ }
+
+/* 刷新按钮样式保持不变 */
+.jp-snippets-refresh {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: var(--jp-brand-color1);
+    border: none;
+    color: white;
+} 
