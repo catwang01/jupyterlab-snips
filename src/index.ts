@@ -10,10 +10,8 @@ import { EditSnippetPanel } from './components/EditSnippetPanel';
 import { SnippetService } from './services/snippetService';
 import { IMainMenu } from '@jupyterlab/mainmenu';
 import { SnippetPanel } from './components/SnippetPanel';
-import { Snippet } from './models/types';
 import { ICompletionProviderManager } from '@jupyterlab/completer';
 import { SnippetCompleterProvider } from './services/completerService';
-import { getTranslation } from './i18n';
 
 const plugin: JupyterFrontEndPlugin<void> = {
     id: 'jupyterlab-snips:plugin',
@@ -83,43 +81,62 @@ const plugin: JupyterFrontEndPlugin<void> = {
             execute: async () => {
                 try {
                     const notebook = notebookTracker.currentWidget;
-                    if (!notebook) {
+                    if (!notebook || !notebook.content || !notebook.content.model) {
                         console.warn('没有活动的笔记本');
                         return;
                     }
 
-                    const cell = notebook.content.activeCell;
-                    if (!cell) {
-                        console.warn('没有选中的单元格');
-                        return;
+                    let code = '';
+                    let isMultiCell = false;
+
+                    // 获取选中的 cells
+                    const activeCell = notebook.content.activeCell;
+                    const selectedCells = notebook.content.widgets.filter(
+                        cell => notebook.content.isSelectedOrActive(cell)
+                    );
+
+                    if (selectedCells.length > 1) {
+                        // 多个 cell 的情况
+                        const codes = selectedCells.map(cell => {
+                            // 使用正确的类型访问
+                            return cell.model.sharedModel.source;
+                        });
+                        code = codes.join('\n<cell/>\n');
+                        isMultiCell = true;
+                    } else {
+                        // 单个 cell 的情况
+                        if (!activeCell) {
+                            console.warn('没有选中的单元格');
+                            return;
+                        }
+                        code = activeCell.model.sharedModel.source;
                     }
 
-                    const code = cell.model.sharedModel.source;
-                    const t = getTranslation();
-                    
                     const editPanel = new EditSnippetPanel({
                         snippet: {
+                            id: crypto.randomUUID(),
                             name: '',
                             code,
                             tags: [],
                             description: '',
-                            id: '',  // 空 id 表示新建
                             createdAt: Date.now(),
-                            updatedAt: Date.now()
-                        } as Snippet,
-                        title: t.editPanel.newTitle,
+                            updatedAt: Date.now(),
+                            isMultiCell
+                        },
                         onSave: async (snippet) => {
-                            // 直接保存，不需要保存返回值
-                            await snippetService.saveSnippet(snippet);
-                            snippetPanel.refresh();
-                            editPanel.dispose();
+                            try {
+                                await snippetService.saveSnippet(snippet);
+                                snippetPanel.refresh();
+                                editPanel.dispose();
+                            } catch (error) {
+                                console.error('保存代码片段失败:', error);
+                            }
                         },
                         onCancel: () => {
                             editPanel.dispose();
                         }
                     });
 
-                    // 将编辑面板添加到主区域
                     app.shell.add(editPanel, 'main');
                 } catch (error) {
                     console.error('保存代码片段失败:', error);
@@ -127,7 +144,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             }
         });
 
-        // 添加到上下文菜单
+        // 添加上下文菜单
         app.contextMenu.addItem({
             command: saveCommand,
             selector: '.jp-CodeCell'
@@ -144,7 +161,7 @@ const plugin: JupyterFrontEndPlugin<void> = {
             { command: saveCommand }
         ], 30);
 
-        // 注册代码片段补全提供者
+        // 注册代码片段补���提供者
         const provider = new SnippetCompleterProvider();
         completionManager.registerProvider(provider);
     }
