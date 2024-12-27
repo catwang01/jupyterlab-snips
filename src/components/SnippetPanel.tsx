@@ -7,6 +7,7 @@ import { JupyterFrontEnd } from '@jupyterlab/application';
 import { EditSnippetPanel } from './EditSnippetPanel';
 import { Dialog, showDialog } from '@jupyterlab/apputils';
 import { getTranslation } from '../i18n';
+import { saveAs } from 'file-saver';
 
 declare global {
     interface Window {
@@ -190,19 +191,75 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
             window.jupyterapp?.shell.add(editPanel, 'main');
         };
 
+        const handleExport = async () => {
+            try {
+                const data = await snippetService.current.exportSnippets();
+                const blob = new Blob([JSON.stringify(data, null, 2)], {
+                    type: 'application/json'
+                });
+                saveAs(blob, 'snippets-export.json');
+            } catch (error) {
+                console.error('Export failed:', error);
+            }
+        };
+
+        const handleImport = async () => {
+            try {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.onchange = async (e: Event) => {
+                    const file = (e.target as HTMLInputElement).files?.[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        try {
+                            const data = JSON.parse(e.target?.result as string);
+                            await snippetService.current.importSnippets(data);
+                            // 刷新列表
+                            loadSnippets();
+                        } catch (error) {
+                            console.error('Import failed:', error);
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+
+                input.click();
+            } catch (error) {
+                console.error('Import failed:', error);
+            }
+        };
+
         return (
             <div className="jp-snippets-panel">
+                <div className="jp-snippets-header">
+                    <div className="jp-snippets-actions">
+                        <button className="jp-snippets-button" onClick={handleNew}>
+                            New Snippet
+                        </button>
+                        <button className="jp-snippets-button" onClick={handleExport}>
+                            Export
+                        </button>
+                        <button className="jp-snippets-button" onClick={handleImport}>
+                            Import
+                        </button>
+                        <button className="jp-snippets-button" onClick={loadSnippets}>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
                 <SnippetList
                     snippets={snippets}
                     searchText={searchText}
                     setSearchText={setSearchText}
                     selectedCategories={selectedCategories}
                     onCategoriesChange={setSelectedCategories}
-                    onRefresh={loadSnippets}
                     onInsert={handleInsert}
                     onEdit={handleEdit}
                     onDelete={handleDelete}
-                    onNew={handleNew}
                 />
             </div>
         );

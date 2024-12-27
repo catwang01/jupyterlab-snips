@@ -3,30 +3,26 @@ import { Snippet } from '../models/types';
 import { MultiSelect } from './MultiSelect';
 import { getTranslation } from '../i18n';
 
-interface SnippetListProps {
+interface ISnippetListProps {
     snippets: Snippet[];
     searchText: string;
-    setSearchText: (value: string) => void;
+    setSearchText: (text: string) => void;
     selectedCategories: string[];
     onCategoriesChange: (categories: string[]) => void;
-    onRefresh: () => void;
     onInsert: (code: string) => void;
     onEdit: (snippet: Snippet) => void;
     onDelete: (id: string) => void;
-    onNew: () => void;
 }
 
-export const SnippetList: React.FC<SnippetListProps> = ({
+export const SnippetList: React.FC<ISnippetListProps> = ({
     snippets,
     searchText,
     setSearchText,
     selectedCategories,
     onCategoriesChange,
-    onRefresh,
     onInsert,
     onEdit,
-    onDelete,
-    onNew
+    onDelete
 }) => {
     const t = getTranslation();
     const availableTags: string[] = Array.from(
@@ -67,20 +63,6 @@ export const SnippetList: React.FC<SnippetListProps> = ({
                         onChange={onCategoriesChange}
                         placeholder={t.search.tagPlaceholder}
                     />
-                </div>
-                <div className="jp-snippets-actions">
-                    <button 
-                        className="jp-snippets-button"
-                        onClick={onNew}
-                    >
-                        {t.buttons.new}
-                    </button>
-                    <button 
-                        className="jp-snippets-button"
-                        onClick={onRefresh}
-                    >
-                        {t.buttons.refresh}
-                    </button>
                 </div>
             </div>
             

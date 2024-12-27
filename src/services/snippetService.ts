@@ -1,6 +1,12 @@
 import { ServerConnection } from '@jupyterlab/services';
 import { Snippet } from '../models/types';
 
+export interface ISnippetExport {
+  snippets: Snippet[];
+  tags: string[];
+  version: string;
+}
+
 export class SnippetService {
     private readonly baseUrl: string;
     private readonly serverSettings: ServerConnection.ISettings;
@@ -122,6 +128,44 @@ export class SnippetService {
 
         if (!response.ok) {
             throw new Error('保存标签失败');
+        }
+    }
+
+    async exportSnippets(): Promise<ISnippetExport> {
+        const snippets = await this.getSnippets();
+        const tags = await this.getTags();
+        return {
+            snippets,
+            tags,
+            version: '1.0.0' // 版本号用于后续兼容性检查
+        };
+    }
+
+    async importSnippets(data: ISnippetExport): Promise<void> {
+        if (!data.version || !data.snippets) {
+            throw new Error('Invalid import data format');
+        }
+
+        // 清除现有数据
+        await this.clearAll();
+
+        // 导入新数据
+        for (const snippet of data.snippets) {
+            await this.saveSnippet(snippet);
+        }
+
+        // 更新标签
+        const allSnippets = await this.getSnippets();
+        const allTags: string[] = Array.from(new Set(
+            allSnippets.flatMap(s => s.tags || [])
+        ));
+        await this.saveTags(allTags);
+    }
+
+    private async clearAll(): Promise<void> {
+        const snippets = await this.getSnippets();
+        for (const snippet of snippets) {
+            await this.deleteSnippet(snippet.id);
         }
     }
 } 
