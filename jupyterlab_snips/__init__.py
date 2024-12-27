@@ -4,11 +4,18 @@ JupyterLab Snippets - A JupyterLab extension for managing code snippets
 from ._version import __version__
 from jupyter_server.utils import url_path_join
 from .handlers import SnippetHandler, setup_handlers
+import json
+import os
 
 def _jupyter_labextension_paths():
+    # 读取 package.json 文件
+    package_path = os.path.join(os.path.dirname(__file__), '..', 'package.json')
+    with open(package_path) as f:
+        package_data = json.load(f)
+    
     return [{
         'src': 'labextension',
-        'dest': 'jupyterlab-snips'
+        'dest': package_data['name']  # 使用 package.json 中的名称
     }]
 
 def _jupyter_server_extension_points():

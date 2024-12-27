@@ -43,7 +43,9 @@ export default {
         nameError: 'Name cannot be empty',
         nameExistsError: 'This name already exists',
         update: 'Update',
-        close: '×'
+        close: '×',
+        saveButton: 'Create Snippet',
+        updateButton: 'Update Snippet'
     },
     multiSelect: {
         noOptions: 'No options',

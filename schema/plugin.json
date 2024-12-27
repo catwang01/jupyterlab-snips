@@ -1,0 +1,8 @@
+{
+  "jupyter.lab.shortcuts": [],
+  "title": "jupyterlab-snips",
+  "description": "jupyterlab-snips settings.",
+  "type": "object",
+  "properties": {},
+  "additionalProperties": false
+}

@@ -34,7 +34,7 @@ export default {
         tags: '标签',
         nameLabel: '名称：',
         namePlaceholder: '输入代码片段名称',
-        tagsLabel: '标签��',
+        tagsLabel: '标签：',
         inputTagsPlaceholder: '选择或输入标签',
         descriptionLabel: '描述：',
         descriptionPlaceholder: '输入描述（可选）',
@@ -43,7 +43,9 @@ export default {
         nameError: '名称不能为空',
         nameExistsError: '该名称已存在',
         update: '更新',
-        close: '×'
+        close: '×',
+        saveButton: '创建片段',
+        updateButton: '更新片段'
     },
     multiSelect: {
         noOptions: '无选项',
