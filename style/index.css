@@ -11,9 +11,11 @@
 
 .jp-snippets-search input {
     width: 100%;
-    padding: 4px 8px;
     border: 1px solid var(--jp-border-color1);
+    padding: 0px;
     border-radius: 3px;
+    background: var(--jp-input-active-background);
+    color: var(--jp-ui-font-color0);
 }
 
 .jp-snippets-container {
@@ -204,15 +206,6 @@
     flex-direction: column;
     background: var(--jp-layout-color1);
     color: var(--jp-ui-font-color1);
-}
-
-.jp-snippets-search input {
-    width: 100%;
-    padding: 4px 8px;
-    border: 1px solid var(--jp-border-color1);
-    border-radius: 3px;
-    background: var(--jp-input-active-background);
-    color: var(--jp-ui-font-color0);
 }
 
 .jp-snippets-content {
@@ -703,12 +696,13 @@
     background: var(--jp-layout-color2);
 }
 
-/* 调整搜索框和标签选择器的布局 */
+/* 调整搜索框和标签选择器��布局 */
 .jp-snippets-filter {
     display: flex;
     flex-direction: column;
     margin-top: 8px;
-    width: 60%;
+    width: 100%;
+    margin-right: 2px;
     background: var(--jp-layout-color1);
 }
 
@@ -724,7 +718,6 @@
 }
 
 .jp-snippets-search input {
-    padding: 0 8px;
     border: 1px solid var(--jp-border-color1);
     border-radius: 4px;
     background: var(--jp-input-background);
@@ -752,7 +745,7 @@
     background: var(--jp-brand-color1);
     border: none;
     color: white;
- }
+}
 
 /* 刷新按钮样式保持不变 */
 .jp-snippets-refresh {
@@ -762,4 +755,23 @@
     background: var(--jp-brand-color1);
     border: none;
     color: white;
+}
+
+.jp-snippets-button {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    background: var(--jp-brand-color1);
+    border: none;
+    color: white;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.jp-snippets-button:hover {
+    opacity: 0.8;
+}
+
+.jp-snippets-button:active {
+    transform: scale(0.98);
 } 
