@@ -8,6 +8,8 @@ import { EditSnippetPanel } from './EditSnippetPanel';
 import { Dialog, showDialog } from '@jupyterlab/apputils';
 import { getTranslation } from '../i18n';
 import { saveAs } from 'file-saver';
+import { NotebookPanel, NotebookActions } from '@jupyterlab/notebook';
+import { CodeCell } from '@jupyterlab/cells';
 
 declare global {
     interface Window {
@@ -52,8 +54,8 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         const handleInsert = async (snippet: Snippet) => {
             const t = getTranslation();
             try {
-                const notebook = window.jupyterapp?.shell.currentWidget;
-                if (!notebook) {
+                const notebookWidget = window.jupyterapp?.shell.currentWidget as NotebookPanel;
+                if (!notebookWidget || !notebookWidget.content || !notebookWidget.content.model) {
                     void showDialog({
                         title: t.dialog.errorTitle,
                         body: t.dialog.noNotebook,
@@ -62,46 +64,81 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                     return;
                 }
 
+                const notebook = notebookWidget.content;
+
                 if (snippet.isMultiCell) {
                     // 处理多个 cell 的情况
                     const cells = snippet.code.split('<cell/>');
+                    
+                    // 获取当前活动 cell 的索引
+                    const activeIndex = notebook.activeCellIndex;
+                    
+                    // 插入所有 cells
                     for (const cellCode of cells) {
-                        // 先创建新的 cell
-                        await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
-                        // 等待一下确保 cell 已创建
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        // 激活新创建的 cell
-                        await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
-                        // 插入代码
-                        await window.jupyterapp?.commands.execute('notebook:replace-selection', {
-                            text: cellCode.trim()
-                        });
+                        // 创建并插入新的 cell
+                        NotebookActions.insertBelow(notebook);
+                        const cell = notebook.activeCell as CodeCell;
+                        if (cell) {
+                            cell.model.sharedModel.setSource(cellCode.trim());
+                        }
                     }
+
+                    // 回到第一个插入的 cell
+                    notebook.activeCellIndex = activeIndex + 1;
                 } else {
-                    // 单个 cell 的情况，在当前 cell 插入
-                    const activeCell = (notebook as any).content.activeCell;
+                    // 单个 cell 的情况
+                    const activeCell = notebook.activeCell as CodeCell;
                     if (activeCell) {
-                        // 如果有活动的 cell，直接插入代码
-                        await window.jupyterapp?.commands.execute('notebook:replace-selection', {
-                            text: snippet.code
-                        });
+                        // 获取当前光标位置
+                        const editor = activeCell.editor;
+                        if (!editor) {
+                            // 如果没有编辑器，直接替换整个内容
+                            activeCell.model.sharedModel.setSource(snippet.code);
+                            return;
+                        }
+
+                        try {
+                            // 获取当前位置和文本
+                            const pos = editor.getCursorPosition();
+                            if (!pos) {
+                                // 如果无法获取光标位置，直接替换整个内容
+                                activeCell.model.sharedModel.setSource(snippet.code);
+                                return;
+                            }
+
+                            const currentText = activeCell.model.sharedModel.source;
+                            const offset = editor.getOffsetAt(pos);
+
+                            // 在光标位置插入代码
+                            const newText = currentText.slice(0, offset) + 
+                                          snippet.code + 
+                                          currentText.slice(offset);
+                            
+                            activeCell.model.sharedModel.setSource(newText);
+                            
+                            // 移动光标到插入的代码后面
+                            const newPos = editor.getPositionAt(offset + snippet.code.length);
+                            if (newPos) {
+                                editor.setCursorPosition(newPos);
+                            }
+                        } catch (e) {
+                            // 如果出现任何错误，回退到简单的替换
+                            activeCell.model.sharedModel.setSource(snippet.code);
+                        }
                     } else {
-                        // 如果没有活动的 cell，创建新的 cell
-                        await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
-                        // 等待一下确保 cell 已创建
-                        await new Promise(resolve => setTimeout(resolve, 100));
-                        // 激活新创建的 cell
-                        await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
-                        // 插入代码
-                        await window.jupyterapp?.commands.execute('notebook:replace-selection', {
-                            text: snippet.code
-                        });
+                        // 如果没有活动的 cell，创建新的并插入
+                        NotebookActions.insertBelow(notebook);
+                        const cell = notebook.activeCell as CodeCell;
+                        if (cell) {
+                            cell.model.sharedModel.setSource(snippet.code);
+                        }
                     }
                 }
 
-                // 最后聚焦到 cell
-                await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
+                // 聚焦到活动的 cell
+                notebook.activate();
             } catch (error) {
+                console.error('Insert snippet error:', error);
                 void showDialog({
                     title: t.dialog.errorTitle,
                     body: t.dialog.insertError + error,
