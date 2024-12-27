@@ -6,8 +6,9 @@ import { getTranslation } from '../i18n';
 
 interface EditSnippetPanelProps {
     snippet: Snippet;
-    onSave: (updatedSnippet: Snippet) => void;
+    onSave: (snippet: Snippet) => void;
     onCancel: () => void;
+    title?: string;
 }
 
 // Custom multi-select input component

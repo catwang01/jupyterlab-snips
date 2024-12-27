@@ -13,6 +13,7 @@ import { SnippetPanel } from './components/SnippetPanel';
 import { Snippet } from './models/types';
 import { ICompletionProviderManager } from '@jupyterlab/completer';
 import { SnippetCompleterProvider } from './services/completerService';
+import { getTranslation } from './i18n';
 
 const plugin: JupyterFrontEndPlugin<void> = {
     id: 'jupyterlab-snips:plugin',
@@ -106,8 +107,13 @@ const plugin: JupyterFrontEndPlugin<void> = {
                         updatedAt: Date.now()
                     };
 
+                    const t = getTranslation();
                     const editPanel = new EditSnippetPanel({
-                        snippet: newSnippet,
+                        snippet: {
+                            ...newSnippet,
+                            id: ''
+                        },
+                        title: t.editPanel.newTitle,
                         onSave: async (snippet) => {
                             await snippetService.saveSnippet(snippet);
                             snippetPanel.refresh();
