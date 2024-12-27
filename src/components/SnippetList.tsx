@@ -9,7 +9,7 @@ interface ISnippetListProps {
     setSearchText: (text: string) => void;
     selectedCategories: string[];
     onCategoriesChange: (categories: string[]) => void;
-    onInsert: (code: string) => void;
+    onInsert: (snippet: Snippet) => void;
     onEdit: (snippet: Snippet) => void;
     onDelete: (id: string) => void;
 }
@@ -83,28 +83,49 @@ export const SnippetList: React.FC<ISnippetListProps> = ({
 
 interface SnippetItemProps {
     snippet: Snippet;
-    onInsert: (code: string) => void;
+    onInsert: (snippet: Snippet) => void;
     onEdit: (snippet: Snippet) => void;
     onDelete: (id: string) => void;
 }
 
 const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, onDelete }) => {
-    // Get preview code
-    const getPreviewCode = (code: string) => {
-        const lines = code.split('\n');
-        if (lines.length > 10) {
-            return lines.slice(0, 10).join('\n') + t.preview.more;
+    const t = getTranslation();
+
+    // 更新预览代码的函数定义
+    const getPreviewCode = (code: string, isMultiCell?: boolean) => {
+        if (isMultiCell) {
+            // 对于多个 cell 的情况，分别处理每个 cell 的代码
+            const cells = code.split('<cell/>');
+            const preview = cells.map((cellCode, index) => {
+                const lines = cellCode.trim().split('\n');
+                if (lines.length > 5) {
+                    // 每个 cell 最多显示 5 行
+                    return `# Cell ${index + 1}:\n${lines.slice(0, 5).join('\n')}...\n`;
+                }
+                return `# Cell ${index + 1}:\n${cellCode.trim()}`;
+            }).join('\n---\n'); // 使用分隔线分隔不同的 cell
+
+            if (cells.length > 3) {
+                // 如果 cell 太多，只显示前三个
+                return preview.split('---\n').slice(0, 3).join('\n---\n') + '\n...(more cells)';
+            }
+            return preview;
+        } else {
+            // 单个 cell 的情况保持原样
+            const lines = code.split('\n');
+            if (lines.length > 10) {
+                return lines.slice(0, 10).join('\n') + '\n' + t.preview.more;
+            }
+            return code;
         }
-        return code;
     };
 
     const tags = snippet.tags || [];
-    const t = getTranslation();
 
     return (
         <div 
             className="jp-snippets-item"
-            title={getPreviewCode(snippet.code)}
+            title={getPreviewCode(snippet.code, snippet.isMultiCell)}
         >
             <div className="jp-snippets-item-header">
                 <h3>{snippet.name}</h3>
@@ -119,7 +140,10 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
             </div>
             {snippet.description && <p>{snippet.description}</p>}
             <div className="jp-snippets-item-actions">
-                <button className="jp-snippets-button" onClick={() => onInsert(snippet.code)}>
+                <button 
+                    className="jp-snippets-button" 
+                    onClick={() => onInsert(snippet)}
+                >
                     {t.buttons.insert}
                 </button>
                 <button className="jp-snippets-button" onClick={() => onEdit(snippet)}>

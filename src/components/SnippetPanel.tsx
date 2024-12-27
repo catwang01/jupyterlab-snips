@@ -49,7 +49,7 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
             loadSnippets();
         }, [loadSnippets]);
 
-        const handleInsert = async (code: string) => {
+        const handleInsert = async (snippet: Snippet) => {
             const t = getTranslation();
             try {
                 const notebook = window.jupyterapp?.shell.currentWidget;
@@ -62,23 +62,44 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                     return;
                 }
 
-                // Get current active cell
-                const activeCell = (notebook as any).content.activeCell;
-                
-                if (activeCell) {
-                    // If there is an active cell, insert code directly
-                    await window.jupyterapp?.commands.execute('notebook:replace-selection', {
-                        text: code
-                    });
+                if (snippet.isMultiCell) {
+                    // 处理多个 cell 的情况
+                    const cells = snippet.code.split('<cell/>');
+                    for (const cellCode of cells) {
+                        // 先创建新的 cell
+                        await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
+                        // 等待一下确保 cell 已创建
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        // 激活新创建的 cell
+                        await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
+                        // 插入代码
+                        await window.jupyterapp?.commands.execute('notebook:replace-selection', {
+                            text: cellCode.trim()
+                        });
+                    }
                 } else {
-                    // If no active cell, create a new cell and insert code
-                    await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
-                    await window.jupyterapp?.commands.execute('notebook:replace-selection', {
-                        text: code
-                    });
+                    // 单个 cell 的情况，在当前 cell 插入
+                    const activeCell = (notebook as any).content.activeCell;
+                    if (activeCell) {
+                        // 如果有活动的 cell，直接插入代码
+                        await window.jupyterapp?.commands.execute('notebook:replace-selection', {
+                            text: snippet.code
+                        });
+                    } else {
+                        // 如果没有活动的 cell，创建新的 cell
+                        await window.jupyterapp?.commands.execute('notebook:insert-cell-below');
+                        // 等待一下确保 cell 已创建
+                        await new Promise(resolve => setTimeout(resolve, 100));
+                        // 激活新创建的 cell
+                        await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
+                        // 插入代码
+                        await window.jupyterapp?.commands.execute('notebook:replace-selection', {
+                            text: snippet.code
+                        });
+                    }
                 }
 
-                // Focus on the cell
+                // 最后聚焦到 cell
                 await window.jupyterapp?.commands.execute('notebook:enter-edit-mode');
             } catch (error) {
                 void showDialog({
