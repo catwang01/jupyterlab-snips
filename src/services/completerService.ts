@@ -58,7 +58,7 @@ export class SnippetCompleterProvider implements ICompletionProvider<CompletionI
         const items = matches.map(snippet => ({
             label: snippet.name,
             insertText: snippet.code,
-            type: 'snippet'
+            type: snippet.isMultiCell ? 'multi-cell-snippet' : 'snippet'
         }));
 
         return {
