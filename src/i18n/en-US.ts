@@ -1,4 +1,4 @@
-export default {
+export const enUS = {
     search: {
         placeholder: 'Search snippets...',
         tagPlaceholder: 'Filter by tags...'
@@ -11,7 +11,9 @@ export default {
         delete: 'Delete',
         cancel: 'Cancel',
         save: 'Save',
-        confirm: 'OK'
+        confirm: 'Confirm',
+        export: 'Export',
+        import: 'Import'
     },
     dialog: {
         deleteTitle: 'Confirm Delete',
@@ -29,46 +31,25 @@ export default {
         title: 'Edit Snippet',
         newTitle: 'New Snippet',
         name: 'Name',
-        description: 'Description',
+        namePlaceholder: 'Enter snippet name...',
         code: 'Code',
+        codePlaceholder: 'Enter your code...',
+        description: 'Description',
+        descriptionPlaceholder: 'Enter description...',
         tags: 'Tags',
+        tagsPlaceholder: 'Add tags...',
         nameLabel: 'Name:',
-        namePlaceholder: 'Enter snippet name',
         tagsLabel: 'Tags:',
-        inputTagsPlaceholder: 'Select or enter tags',
         descriptionLabel: 'Description:',
-        descriptionPlaceholder: 'Enter description (optional)',
         codeLabel: 'Code:',
-        codePlaceholder: 'Enter code',
+        inputTagsPlaceholder: 'Select or enter tags...',
         nameError: 'Name cannot be empty',
-        nameExistsError: 'This name already exists',
-        update: 'Update',
+        nameExistsError: 'Name already exists',
         close: '×',
         saveButton: 'Create Snippet',
         updateButton: 'Update Snippet'
     },
-    multiSelect: {
-        noOptions: 'No options',
-        addNew: 'Add new tag',
-        removeTag: 'Remove tag',  // for aria-label
-        clearAll: 'Clear all',    // for aria-label
-        searchPlaceholder: 'Search or add new tag...'
-    },
     preview: {
         more: '\n...'
-    },
-    saveDialog: {
-        title: 'Save Snippet',
-        nameLabel: 'Name:',
-        namePlaceholder: 'Enter snippet name',
-        descriptionLabel: 'Description:',
-        descriptionPlaceholder: 'Enter description (optional)',
-        tagsLabel: 'Tags:',
-        tagsPlaceholder: 'Select or enter tags',
-        save: 'Save',
-        cancel: 'Cancel',
-        nameRequired: 'Name is required',
-        nameExists: 'This name already exists',
-        saveError: 'Failed to save: '
     }
 }; 

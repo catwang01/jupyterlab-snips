@@ -31,13 +31,13 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         const [searchText, setSearchText] = useState('');
         const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
         const snippetService = useRef(new SnippetService());
+        const t = getTranslation();
 
         const loadSnippets = useCallback(async () => {
             try {
                 const data = await snippetService.current.getSnippets();
                 setSnippets(data);
             } catch (error) {
-                const t = getTranslation();
                 console.error(t.dialog.loadSnippetsError, error);
             }
         }, []);
@@ -52,7 +52,6 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         }, [loadSnippets]);
 
         const handleInsert = async (snippet: Snippet) => {
-            const t = getTranslation();
             try {
                 const notebookWidget = window.jupyterapp?.shell.currentWidget as NotebookPanel;
                 if (!notebookWidget || !notebookWidget.content || !notebookWidget.content.model) {
@@ -114,7 +113,6 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         };
 
         const handleEdit = async (snippet: Snippet) => {
-            const t = getTranslation();
             const editPanel = new EditSnippetPanel({
                 snippet,
                 onSave: async (updatedSnippet) => {
@@ -147,8 +145,6 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         };
 
         const handleDelete = async (id: string) => {
-            const t = getTranslation();
-            
             const result = await showDialog({
                 title: t.dialog.deleteTitle,
                 body: t.dialog.deleteMessage,
@@ -181,7 +177,6 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
         };
 
         const handleNew = () => {
-            const t = getTranslation();
             const newSnippet: Snippet = {
                 id: crypto.randomUUID(),
                 name: '',
@@ -262,16 +257,16 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                 <div className="jp-snippets-header">
                     <div className="jp-snippets-actions">
                         <button className="jp-snippets-button" onClick={handleNew}>
-                            New Snippet
+                            {t.buttons.new}
                         </button>
                         <button className="jp-snippets-button" onClick={handleExport}>
-                            Export
+                            {t.buttons.export}
                         </button>
                         <button className="jp-snippets-button" onClick={handleImport}>
-                            Import
+                            {t.buttons.import}
                         </button>
                         <button className="jp-snippets-button" onClick={loadSnippets}>
-                            Refresh
+                            {t.buttons.refresh}
                         </button>
                     </div>
                 </div>

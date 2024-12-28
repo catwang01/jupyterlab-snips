@@ -490,51 +490,6 @@
     background: var(--jp-border-color3);
 }
 
-/* 美化 title 提示 */
-.jp-snippets-item {
-    /* ... 其他样式保持不变 ... */
-}
-
-/* 美化原生 title */
-::selection {
-    background: var(--jp-brand-color1);
-    color: white;
-}
-
-/* 全局美化 title 样式 */
-[title] {
-    position: relative;
-}
-
-[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    left: calc(100% + 8px);
-    top: 0;
-    min-width: 300px;
-    max-width: 400px;
-    padding: 8px;
-    border-radius: 4px;
-    background: var(--jp-layout-color0);
-    border: 1px solid var(--jp-border-color1);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    color: var(--jp-content-font-color1);
-    font-family: var(--jp-code-font-family);
-    font-size: 11px;
-    line-height: 1.4;
-    white-space: pre-wrap;
-    word-break: break-all;
-    z-index: 10000;
-}
-
-/* 当靠近右边时显示在左侧 */
-@media (min-width: 768px) {
-    .jp-snippets-item:has(+ .jp-snippets-item:nth-last-child(-n+3))[title]:hover::after {
-        left: auto;
-        right: calc(100% + 8px);
-    }
-}
-
 .jp-snippets-list::-webkit-scrollbar {
     width: 8px;
     height: 0;

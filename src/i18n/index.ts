@@ -1,9 +1,9 @@
 import { PageConfig } from '@jupyterlab/coreutils';
-import enUS from './en-US';
-import zhCN from './zh-CN';
+import { enUS } from './en-US';
+import { zhCN } from './zh-CN';
 
 type Locale = 'en-US' | 'zh-CN';
-type Translation = typeof enUS;
+type Translation = typeof enUS | typeof zhCN;
 
 const translations: Record<Locale, Translation> = {
     'en-US': enUS,
