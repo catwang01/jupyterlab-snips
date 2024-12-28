@@ -43,7 +43,7 @@ export const SnippetList: React.FC<ISnippetListProps> = ({
             
         // Filter by selected categories/tags
         const matchesCategory = selectedCategories.length === 0 || 
-            (snippet.tags && snippet.tags.some(tag => selectedCategories.includes(tag)));
+            (snippet.tags && snippet.tags.some((tag: string) => selectedCategories.includes(tag)));
 
         return matchesSearch && matchesCategory;
     });
@@ -99,7 +99,7 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
 
     const getPreviewContent = (snippet: Snippet) => {
         if (snippet.isMultiCell) {
-            return snippet.code.split('<cell/>').map((cell, i) => (
+            return snippet.code.split('<cell/>').map((cell: string, i: number) => (
                 `# Cell ${i + 1}\n${cell.trim()}`
             )).join('\n\n');
         }
@@ -157,7 +157,7 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
                     </span>
                 )}
                 {snippet.tags && snippet.tags.length > 0 && <div className="jp-snippets-tags">
-                    {snippet.tags.map(tag => (
+                    {snippet.tags.map((tag: string) => (
                         <span key={tag} className="jp-snippets-tag">
                             {tag}
                         </span>

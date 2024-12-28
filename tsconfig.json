@@ -19,16 +19,9 @@
     "strict": true,
     "strictNullChecks": true,
     "target": "ES2018",
+    "types": ["node"],
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": [
-    "src/**/*",
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "references": [
-    {
-      "path": "./tsconfig.test.json"
-    }
-  ]
+  "include": ["src/**/*"],
+  "exclude": ["src/**/__tests__/*"]
 }
