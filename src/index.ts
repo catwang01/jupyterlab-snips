@@ -3,6 +3,14 @@ import {
     JupyterFrontEndPlugin
 } from '@jupyterlab/application';
 import { SnippetPanel } from './components/SnippetPanel';
+import { LabIcon } from '@jupyterlab/ui-components';
+import snippetsIconStr from '../style/icons/snippets.svg';
+
+// 创建一个自定义图标
+const snippetsIcon = new LabIcon({
+    name: 'jupyterlab-snippets:snippets',
+    svgstr: snippetsIconStr
+});
 
 const plugin: JupyterFrontEndPlugin<void> = {
     id: 'jupyterlab-snips:plugin',
@@ -13,7 +21,8 @@ const plugin: JupyterFrontEndPlugin<void> = {
         // 创建面板
         const panel = new SnippetPanel();
         panel.id = 'jupyterlab-snippets';
-        panel.title.label = 'Snippets';
+        panel.title.icon = snippetsIcon;
+        panel.title.caption = 'Manage your code snippets';
         panel.title.closable = true;
 
         // 添加面板到主区域
