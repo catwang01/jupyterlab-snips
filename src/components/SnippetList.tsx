@@ -1,7 +1,10 @@
-import React from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { Snippet } from '../models/types';
 import { MultiSelect } from './MultiSelect';
 import { getTranslation } from '../i18n';
+import { JupyterFrontEnd } from '@jupyterlab/application';
+import { Widget } from '@lumino/widgets';
+import { TooltipModal } from './TooltipModal';
 
 interface ISnippetListProps {
     snippets: Snippet[];
@@ -68,13 +71,14 @@ export const SnippetList: React.FC<ISnippetListProps> = ({
             
             <div className="jp-snippets-list">
                 {filteredSnippets.map(snippet => (
-                    <SnippetItem
-                        key={snippet.id}
-                        snippet={snippet}
-                        onInsert={onInsert}
-                        onEdit={onEdit}
-                        onDelete={onDelete}
-                    />
+                    <div key={snippet.id} className="jp-snippets-item-wrapper">
+                        <SnippetItem
+                            snippet={snippet}
+                            onInsert={onInsert}
+                            onEdit={onEdit}
+                            onDelete={onDelete}
+                        />
+                    </div>
                 ))}
             </div>
         </div>
@@ -90,53 +94,82 @@ interface SnippetItemProps {
 
 const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, onDelete }) => {
     const t = getTranslation();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const tooltipRef = useRef<Widget | null>(null);
 
-    // 更新预览代码的函数定义
-    const getPreviewCode = (code: string, isMultiCell?: boolean) => {
-        if (isMultiCell) {
-            // 对于多个 cell 的情况，分别处理每个 cell 的代码
-            const cells = code.split('<cell/>');
-            const preview = cells.map((cellCode, index) => {
-                const lines = cellCode.trim().split('\n');
-                if (lines.length > 5) {
-                    // 每个 cell 最多显示 5 行
-                    return `# Cell ${index + 1}:\n${lines.slice(0, 5).join('\n')}...\n`;
-                }
-                return `# Cell ${index + 1}:\n${cellCode.trim()}`;
-            }).join('\n---\n'); // 使用分隔线分隔不同的 cell
+    const getPreviewContent = (snippet: Snippet) => {
+        const content = [
+            `${t.editPanel.name}: ${snippet.name}`,
+            snippet.description ? `${t.editPanel.description}: ${snippet.description}` : '',
+            '---',
+            `${t.editPanel.code}:`,
+            snippet.isMultiCell ? 
+                snippet.code.split('<cell/>').map((cell, i) => 
+                    `\n=== Cell ${i + 1} ===\n${cell.trim()}`
+                ).join('\n') 
+                : snippet.code
+        ].filter(Boolean).join('\n');
 
-            if (cells.length > 3) {
-                // 如果 cell 太多，只显示前三个
-                return preview.split('---\n').slice(0, 3).join('\n---\n') + '\n...(more cells)';
-            }
-            return preview;
-        } else {
-            // 单个 cell 的情况保持原样
-            const lines = code.split('\n');
-            if (lines.length > 10) {
-                return lines.slice(0, 10).join('\n') + '\n' + t.preview.more;
-            }
-            return code;
-        }
+        return content;
     };
 
-    const tags = snippet.tags || [];
+    const handleTooltip = useCallback((show: boolean) => {
+        const app = (window as any).jupyterapp as JupyterFrontEnd;
+        if (!app) return;
+
+        if (show) {
+            const rect = containerRef.current?.getBoundingClientRect();
+            if (!rect) return;
+
+            const tooltip = new TooltipModal({
+                content: getPreviewContent(snippet),
+                position: {
+                    top: rect.top,
+                    left: rect.right + 8
+                }
+            });
+
+            Widget.attach(tooltip, document.body);
+            tooltipRef.current = tooltip;
+        } else {
+            if (tooltipRef.current) {
+                tooltipRef.current.dispose();
+                tooltipRef.current = null;
+            }
+        }
+    }, [snippet]);
+
+    // 组件卸载时清理 tooltip
+    useEffect(() => {
+        return () => {
+            if (tooltipRef.current) {
+                tooltipRef.current.dispose();
+                tooltipRef.current = null;
+            }
+        };
+    }, []);
 
     return (
         <div 
+            ref={containerRef}
             className="jp-snippets-item"
-            title={getPreviewCode(snippet.code, snippet.isMultiCell)}
+            onMouseEnter={() => handleTooltip(true)}
+            onMouseLeave={() => handleTooltip(false)}
         >
             <div className="jp-snippets-item-header">
                 <h3>{snippet.name}</h3>
-                { tags.length > 0 && <div className="jp-snippets-tags">
-                    {tags.map(tag => (
+                {snippet.isMultiCell && (
+                    <span className="jp-snippets-multicell-badge">
+                        Multi-cell
+                    </span>
+                )}
+                {snippet.tags && snippet.tags.length > 0 && <div className="jp-snippets-tags">
+                    {snippet.tags.map(tag => (
                         <span key={tag} className="jp-snippets-tag">
                             {tag}
                         </span>
                     ))}
-                </div>
-                }
+                </div>}
             </div>
             {snippet.description && <p>{snippet.description}</p>}
             <div className="jp-snippets-item-actions">

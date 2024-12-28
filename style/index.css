@@ -3,6 +3,7 @@
     flex-direction: column;
     height: 100%;
     padding: 8px;
+    overflow: visible !important;
 }
 
 .jp-snippets-search {
@@ -24,7 +25,6 @@
     flex: 1;
     min-height: 0;
     width: 100%;
-    overflow-x: hidden;
 }
 
 .jp-snippets-categories {
@@ -47,10 +47,13 @@
     color: white;
 }
 
-.jp-snippets-list {
+.jp-snippets-list-wrapper {
+    position: relative;
     flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
+}
+
+.jp-snippets-list {
+    height: 100%;
     margin-top: 8px;
     background: var(--jp-layout-color0);
     border: 1px solid var(--jp-border-color1);
@@ -100,6 +103,11 @@
     transition: opacity 0.2s ease, visibility 0.2s ease;
     pointer-events: none;
     z-index: 10000;
+}
+
+.jp-snippets-item:hover::before {
+    opacity: 1;
+    visibility: visible;
 }
 
 @media (min-width: 768px) {
@@ -527,12 +535,19 @@
 }
 
 .jp-snippets-tag {
+    display: inline-flex;
+    align-items: center;
     padding: 2px 6px;
-    background: var(--jp-layout-color2);
+    margin-left: 8px;
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--jp-brand-color1);
+    background: var(--jp-layout-color0);
+    border: 1px solid var(--jp-brand-color1);
     border-radius: 3px;
-    font-size: 11px;
-    color: var(--jp-content-font-color2);
     white-space: nowrap;
+    opacity: 0.8;
+    transition: all 0.2s ease;
 }
 
 /* 调整标题样式以适应新布局 */
@@ -651,7 +666,7 @@
     background: var(--jp-layout-color2);
 }
 
-/* 调整搜索框和标签选择器��布局 */
+/* 调整搜索框和标签选择器布局 */
 .jp-snippets-filter {
     display: flex;
     flex-direction: column;
@@ -729,4 +744,150 @@
 
 .jp-snippets-button:active {
     transform: scale(0.98);
-} 
+}
+
+.jp-snippets-tooltip {
+    min-width: 300px;
+    max-width: 400px;
+    padding: 8px;
+    border-radius: 4px;
+    background: var(--jp-layout-color1);
+    border: 1px solid var(--jp-border-color1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    pointer-events: none;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.jp-snippets-tooltip-content {
+    margin: 0;
+    font-family: var(--jp-code-font-family);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--jp-content-font-color0);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.jp-snippets-tooltip-modal {
+    background: transparent !important;
+    border: none !important;
+}
+
+.jp-snippets-tooltip-trigger {
+    width: 100%;
+    height: 100%;
+}
+
+.jp-snippets-tooltip-content {
+    margin: 0;
+    font-family: var(--jp-code-font-family);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--jp-content-font-color0);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar-track {
+    background: var(--jp-layout-color0);
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar-thumb {
+    background: var(--jp-border-color2);
+    border-radius: 4px;
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar-thumb:hover {
+    background: var(--jp-border-color3);
+}
+
+.jp-snippets-item-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.jp-snippets-item-wrapper:last-child {
+    margin-bottom: 0;
+}
+
+.jp-snippets-tooltip[data-position="right"] {
+    left: calc(100% + 8px);
+    opacity: 1;
+    visibility: visible;
+}
+
+.jp-snippets-tooltip[data-position="left"] {
+    right: calc(100% + 8px);
+    opacity: 1;
+    visibility: visible;
+}
+
+.jp-snippets-tooltip-content {
+    margin: 0;
+    font-family: var(--jp-code-font-family);
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--jp-content-font-color0);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar-track {
+    background: var(--jp-layout-color0);
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar-thumb {
+    background: var(--jp-border-color2);
+    border-radius: 4px;
+}
+
+.jp-snippets-tooltip::-webkit-scrollbar-thumb:hover {
+    background: var(--jp-border-color3);
+}
+
+.jp-snippets-multicell-badge {
+    padding: 2px 6px;
+    background: var(--jp-layout-color2);
+    border-radius: 3px;
+    font-size: 11px;
+    color: var(--jp-content-font-color2);
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+/* 可选：如果你想保留省略号图标 */
+.jp-snippets-multicell-badge::before {
+    margin-right: 4px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+/* 确保 tooltip 在正确位置显示时是可见的 */
+.jp-snippets-tooltip[data-position="right"],
+.jp-snippets-tooltip[data-position="left"] {
+    opacity: 1;
+    visibility: visible;
+    display: block;
+}
+
+/* 右侧显示 */
+.jp-snippets-tooltip[data-position="right"] {
+    left: calc(100% + 8px);
+}
+
+/* 左侧显示 */
+.jp-snippets-tooltip[data-position="left"] {
+    right: calc(100% + 8px);
+}

@@ -66,6 +66,7 @@
         "@jupyterlab/notebook": "^4.3.4",
         "@jupyterlab/services": "^7.0.0",
         "@jupyterlab/settingregistry": "^4.0.0",
+        "@types/react-dom": "^19.0.2",
         "file-saver": "^2.0.5",
         "react": "^18.2.0",
         "react-dom": "^18.2.0"
