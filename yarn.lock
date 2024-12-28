@@ -1527,7 +1527,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.26.3, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0":
+"@codemirror/view@npm:^6.0.0, @codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.26.3, @codemirror/view@npm:^6.27.0, @codemirror/view@npm:^6.35.0, @codemirror/view@npm:^6.36.1":
   version: 6.36.1
   resolution: "@codemirror/view@npm:6.36.1"
   dependencies:
@@ -6757,6 +6757,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "jupyterlab-snips@workspace:."
   dependencies:
+    "@codemirror/lang-python": ^6.1.6
+    "@codemirror/view": ^6.36.1
     "@jupyterlab/application": ^4.0.0
     "@jupyterlab/apputils": ^4.3.4
     "@jupyterlab/builder": ^4.0.0

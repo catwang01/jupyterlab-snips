@@ -82,45 +82,6 @@
   margin-bottom: 0;
 }
 
-.jp-snippets-item::before {
-  content: attr(data-tooltip);
-  position: absolute;
-  left: calc(100% + 8px);
-  top: 0;
-  min-width: 300px;
-  max-width: 400px;
-  padding: 8px;
-  border-radius: 4px;
-  background: var(--jp-layout-color0);
-  border: 1px solid var(--jp-border-color1);
-  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
-  color: var(--jp-content-font-color1);
-  font-family: var(--jp-code-font-family);
-  font-size: 11px;
-  line-height: 1.4;
-  white-space: pre-wrap;
-  word-break: break-all;
-  opacity: 0;
-  visibility: hidden;
-  transition:
-    opacity 0.2s ease,
-    visibility 0.2s ease;
-  pointer-events: none;
-  z-index: 10000;
-}
-
-.jp-snippets-item:hover::before {
-  opacity: 1;
-  visibility: visible;
-}
-
-@media (width >= 768px) {
-  .jp-snippets-item:has(+ .jp-snippets-item:nth-last-child(-n + 3))::before {
-    left: auto;
-    right: calc(100% + 8px);
-  }
-}
-
 .jp-snippets-item h3 {
   margin: 0 0 2px;
   font-size: 12px;
@@ -717,7 +678,7 @@
   border-radius: 4px;
   background: var(--jp-layout-color1);
   border: 1px solid var(--jp-border-color1);
-  box-shadow: 0 2px 8px rgb(0 0 0 / 10%);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   pointer-events: none;
   max-height: 400px;
   overflow-y: auto;
@@ -725,12 +686,20 @@
 
 .jp-snippets-tooltip-content {
   margin: 0;
+  background: var(--jp-cell-editor-background);
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.jp-snippets-editor {
+  min-height: 50px;
+  height: auto;
+}
+
+.jp-snippets-editor .cm-editor {
   font-family: var(--jp-code-font-family);
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--jp-content-font-color0);
-  white-space: pre-wrap;
-  word-break: break-all;
+  font-size: var(--jp-code-font-size);
+  line-height: var(--jp-code-line-height);
 }
 
 .jp-snippets-tooltip-modal {

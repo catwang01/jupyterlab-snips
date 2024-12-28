@@ -98,19 +98,12 @@ const SnippetItem: React.FC<SnippetItemProps> = ({ snippet, onInsert, onEdit, on
     const tooltipRef = useRef<Widget | null>(null);
 
     const getPreviewContent = (snippet: Snippet) => {
-        const content = [
-            `${t.editPanel.name}: ${snippet.name}`,
-            snippet.description ? `${t.editPanel.description}: ${snippet.description}` : '',
-            '---',
-            `${t.editPanel.code}:`,
-            snippet.isMultiCell ? 
-                snippet.code.split('<cell/>').map((cell, i) => 
-                    `\n=== Cell ${i + 1} ===\n${cell.trim()}`
-                ).join('\n') 
-                : snippet.code
-        ].filter(Boolean).join('\n');
-
-        return content;
+        if (snippet.isMultiCell) {
+            return snippet.code.split('<cell/>').map((cell, i) => (
+                `# Cell ${i + 1}\n${cell.trim()}`
+            )).join('\n\n');
+        }
+        return snippet.code;
     };
 
     const handleTooltip = useCallback((show: boolean) => {
