@@ -88,8 +88,36 @@ const SnippetPanelComponent = forwardRef<SnippetPanelComponentType, SnippetPanel
                     // 单个 cell 的情况
                     const activeCell = notebook.activeCell as CodeCell;
                     if (activeCell) {
-                        // 如果有活动的 cell，直接插入代码
-                        activeCell.model.sharedModel.setSource(snippet.code);
+                        // 获取当前光标位置
+                        const editor = activeCell.editor;
+                        if (!editor) {
+                            // 如果没有编辑器，直接替换整个内容
+                            activeCell.model.sharedModel.setSource(snippet.code);
+                            return;
+                        }
+
+                        const position = editor.getCursorPosition();
+                        if (!position) {
+                            // 如果无法获取光标位置，直接替换整个内容
+                            activeCell.model.sharedModel.setSource(snippet.code);
+                            return;
+                        }
+
+                        const currentText = activeCell.model.sharedModel.source;
+                        const offset = editor.getOffsetAt(position);
+
+                        // 在光标位置插入代码
+                        const beforeCursor = currentText.slice(0, offset);
+                        const afterCursor = currentText.slice(offset);
+                        const newText = beforeCursor + snippet.code + afterCursor;
+                        
+                        activeCell.model.sharedModel.setSource(newText);
+                        
+                        // 移动光标到插入的代码后面
+                        const newPosition = editor.getPositionAt(beforeCursor.length + snippet.code.length);
+                        if (newPosition) {
+                            editor.setCursorPosition(newPosition);
+                        }
                     } else {
                         // 如果没有活动的 cell，创建新的并插入
                         NotebookActions.insertBelow(notebook);
