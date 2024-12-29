@@ -5,6 +5,8 @@ import {
 import { SnippetPanel } from './components/SnippetPanel';
 import { LabIcon } from '@jupyterlab/ui-components';
 import snippetsIconStr from '../style/icons/snippets.svg';
+import { ICompletionProviderManager } from '@jupyterlab/completer';
+import { SnippetCompleterProvider } from './services/completerService';
 
 // 创建一个自定义图标
 const snippetsIcon = new LabIcon({
@@ -15,7 +17,8 @@ const snippetsIcon = new LabIcon({
 const plugin: JupyterFrontEndPlugin<void> = {
     id: 'jupyterlab-snips:plugin',
     autoStart: true,
-    activate: (app: JupyterFrontEnd) => {
+    requires: [ICompletionProviderManager],
+    activate: (app: JupyterFrontEnd, completionManager: ICompletionProviderManager) => {
         console.log('JupyterLab extension jupyterlab-snips is activated!');
 
         // 创建面板
@@ -27,6 +30,10 @@ const plugin: JupyterFrontEndPlugin<void> = {
 
         // 添加面板到主区域
         app.shell.add(panel, 'left');
+
+        // 注册补全提供者
+        const provider = new SnippetCompleterProvider();
+        completionManager.registerProvider(provider);
 
         // 存储 app 实例供其他组件使用
         (window as any).jupyterapp = app;
