@@ -5,8 +5,8 @@ import { SnippetService } from '../services/snippetService';
 import { getTranslation } from '../i18n';
 
 interface EditSnippetPanelProps {
-    snippet: Snippet;
-    onSave: (snippet: Snippet) => void;
+    snippet: Partial<Snippet> & Pick<Snippet, 'code'>;
+    onSave: (snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>) => void;
     onCancel: () => void;
     title?: string;
 }
@@ -125,7 +125,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
     onCancel
 }) => {
     const t = getTranslation();
-    const [name, setName] = useState(snippet.name);
+    const [name, setName] = useState(snippet.name || '');
     const [nameError, setNameError] = useState<string | null>(null);
     const [tags, setTags] = useState<string[]>(snippet.tags || []);
     const [description, setDescription] = useState(snippet.description || '');
@@ -180,7 +180,7 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
     };
 
     const handleSave = async () => {
-        if (!await validateName(name)) {
+        if (!name.trim() || !await validateName(name.trim())) {
             return;
         }
 
@@ -190,12 +190,11 @@ const EditSnippetPanelComponent: React.FC<EditSnippetPanelProps> = ({
             await snippetService.current.saveTags(allTags);
 
             onSave({
-                ...snippet,
-                name,
+                name: name.trim(),
+                code,
                 tags,
                 description,
-                code,
-                updatedAt: Date.now()
+                isMultiCell: snippet.isMultiCell
             });
         } catch (error) {
             console.error(t.dialog.saveError, error);

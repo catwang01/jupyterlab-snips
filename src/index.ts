@@ -65,14 +65,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
                         .map(cell => cell.model.sharedModel.source)
                         .join('<cell/>');
 
-                    const newSnippet: Snippet = {
-                        id: crypto.randomUUID(),
+                    const newSnippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'> = {
                         name: '',
                         code,
                         tags: [],
                         description: '',
-                        createdAt: Date.now(),
-                        updatedAt: Date.now(),
                         isMultiCell: true
                     };
 
@@ -117,14 +114,11 @@ const plugin: JupyterFrontEndPlugin<void> = {
                     selectedText = activeCell.model.sharedModel.source;
                 }
 
-                const newSnippet: Snippet = {
-                    id: crypto.randomUUID(),
+                const newSnippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'> = {
                     name: '',
                     code: selectedText,
                     tags: [],
                     description: '',
-                    createdAt: Date.now(),
-                    updatedAt: Date.now(),
                     isMultiCell: false
                 };
 

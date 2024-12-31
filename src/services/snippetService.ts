@@ -16,7 +16,7 @@ export class SnippetService {
         this.baseUrl = `${this.serverSettings.baseUrl}jupyterlab-snips`;
     }
 
-    async saveSnippet(snippet: Snippet): Promise<void> {
+    async saveSnippet(snippet: Omit<Snippet, 'id' | 'createdAt' | 'updatedAt'>): Promise<void> {
         try {
             const response = await ServerConnection.makeRequest(
                 `${this.baseUrl}/snippets`,
@@ -27,8 +27,7 @@ export class SnippetService {
                     },
                     body: JSON.stringify({
                         ...snippet,
-                        updatedAt: Date.now(),
-                        isMultiCell: snippet.isMultiCell || false  // 确保设置 isMultiCell 字段
+                        isMultiCell: snippet.isMultiCell || false
                     })
                 },
                 this.serverSettings
@@ -54,11 +53,9 @@ export class SnippetService {
 
             // 导入新数据
             for (const snippet of data.snippets) {
+                const { id, createdAt, updatedAt, ...rest } = snippet;  // 移除不需要的字段
                 await this.saveSnippet({
-                    ...snippet,
-                    id: crypto.randomUUID(),
-                    createdAt: Date.now(),
-                    updatedAt: Date.now(),
+                    ...rest,
                     isMultiCell: snippet.isMultiCell || false
                 });
             }
