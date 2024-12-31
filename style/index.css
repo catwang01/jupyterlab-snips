@@ -2,8 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  padding: 8px;
-  overflow: visible !important;
+  overflow: hidden;
 }
 
 .jp-snippets-search {
@@ -21,11 +20,9 @@
 }
 
 .jp-snippets-container {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  min-height: 0;
-  width: 100%;
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: 8px;
 }
 
 .jp-snippets-categories {
@@ -54,13 +51,9 @@
 }
 
 .jp-snippets-list {
-  height: 100%;
-  margin-top: 8px;
-  background: var(--jp-layout-color0);
-  border: 1px solid var(--jp-border-color1);
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .jp-snippets-item {
@@ -186,10 +179,9 @@
 }
 
 .jp-snippets-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+  flex: 0 0 auto;
+  padding: 8px;
+  border-bottom: var(--jp-border-width) solid var(--jp-border-color2);
 }
 
 .jp-snippets-refresh {
@@ -811,4 +803,21 @@
   opacity: 1;
   visibility: visible;
   display: block;
+}
+
+.jp-snippets-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.jp-snippets-container::-webkit-scrollbar-track {
+  background: var(--jp-layout-color1);
+}
+
+.jp-snippets-container::-webkit-scrollbar-thumb {
+  background: var(--jp-border-color2);
+  border-radius: 4px;
+}
+
+.jp-snippets-container::-webkit-scrollbar-thumb:hover {
+  background: var(--jp-border-color3);
 }
